@@ -187,6 +187,44 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
+    /* Mobile Menu Toggle */
+    .mobile-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 24px;
+      height: 18px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 1001;
+    }
+
+    .mobile-toggle span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center;
+    }
+
+    /* Hamburger Animation */
+    .mobile-toggle.active span:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+
+    .mobile-toggle.active span:nth-child(2) {
+      opacity: 0;
+      transform: translateX(10px);
+    }
+
+    .mobile-toggle.active span:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
     /* HERO */
     .hero {
       min-height: 100vh;
@@ -1035,11 +1073,53 @@
 
     @media (max-width: 768px) {
       nav {
-        padding: 20px 24px;
+        padding: 16px 24px;
+      }
+
+      .mobile-toggle {
+        display: flex;
       }
 
       .nav-links {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: var(--bg);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 32px;
+        padding: 40px;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .nav-links.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .nav-links a {
+        font-size: 1.5rem;
+        font-family: var(--font-display);
+        font-weight: 700;
+      }
+
+      .nav-actions {
         display: none;
+      }
+      
+      /* Optional: Add a CTA inside the mobile menu */
+      .nav-links .mobile-cta {
+          margin-top: 20px;
+          width: 100%;
+          text-align: center;
       }
 
       .hero {
@@ -1102,10 +1182,13 @@
       </svg>
       <span>Rastro<span class="accent">Studio</span></span>
     </a>
-    <ul class="nav-links">
-      <li><a href="#servicos" data-i18n="nav-servicos">Serviços</a></li>
-      <li><a href="#portfolio" data-i18n="nav-portfolio">Portfólio</a></li>
-      <li><a href="#processo" data-i18n="nav-processo">Processo</a></li>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#servicos" data-i18n="nav-servicos" onclick="closeMenu()">Serviços</a></li>
+      <li><a href="#portfolio" data-i18n="nav-portfolio" onclick="closeMenu()">Portfólio</a></li>
+      <li><a href="#processo" data-i18n="nav-processo" onclick="closeMenu()">Processo</a></li>
+      <li class="mobile-cta-wrap" style="display: none;">
+          <a href="https://wa.me/34618097942" class="nav-cta" target="_blank" data-i18n="nav-cta">Falar no WhatsApp →</a>
+      </li>
     </ul>
     <div class="nav-actions">
       <div class="lang-switcher">
@@ -1115,6 +1198,11 @@
       </div>
       <a href="https://wa.me/34618097942" class="nav-cta" target="_blank" data-i18n="nav-cta">Falar no WhatsApp →</a>
     </div>
+    <button class="mobile-toggle" id="menuToggle" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
   </nav>
 
   <!-- HERO -->
@@ -1573,6 +1661,22 @@
       isDeleting = false;
       typeWriterWordIndex = 0;
       typeWriterEl.textContent = '';
+    }
+
+    // Mobile menu logic
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+
+    menuToggle.addEventListener('click', () => {
+      menuToggle.classList.toggle('active');
+      navLinks.classList.toggle('active');
+      document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+    });
+
+    function closeMenu() {
+      menuToggle.classList.remove('active');
+      navLinks.classList.remove('active');
+      document.body.style.overflow = '';
     }
 
     if (typeWriterEl) {
