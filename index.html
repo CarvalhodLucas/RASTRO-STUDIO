@@ -122,6 +122,10 @@
       list-style: none;
     }
 
+    .mobile-only {
+      display: none;
+    }
+
     .nav-links a {
       font-size: 0.85rem;
       color: var(--muted);
@@ -1115,11 +1119,10 @@
         display: none;
       }
       
-      /* Optional: Add a CTA inside the mobile menu */
-      .nav-links .mobile-cta {
-          margin-top: 20px;
-          width: 100%;
-          text-align: center;
+      .mobile-only {
+          display: flex !important;
+          flex-direction: column;
+          align-items: center;
       }
 
       .hero {
@@ -1186,15 +1189,22 @@
       <li><a href="#servicos" data-i18n="nav-servicos" onclick="closeMenu()">Serviços</a></li>
       <li><a href="#portfolio" data-i18n="nav-portfolio" onclick="closeMenu()">Portfólio</a></li>
       <li><a href="#processo" data-i18n="nav-processo" onclick="closeMenu()">Processo</a></li>
-      <li class="mobile-cta-wrap" style="display: none;">
-          <a href="https://wa.me/34618097942" class="nav-cta" target="_blank" data-i18n="nav-cta">Falar no WhatsApp →</a>
+      <li class="mobile-only">
+          <div class="lang-switcher" style="margin-top: 20px;">
+            <button class="lang-btn btn-pt" onclick="setLanguage('pt')">PT</button>
+            <span style="color: var(--muted); font-size: 0.8em; font-weight: 400;">|</span>
+            <button class="lang-btn btn-es" onclick="setLanguage('es')">ES</button>
+          </div>
+      </li>
+      <li class="mobile-only">
+          <a href="https://wa.me/34618097942" class="nav-cta" target="_blank" data-i18n="nav-cta" style="margin-top: 10px;">Falar no WhatsApp →</a>
       </li>
     </ul>
     <div class="nav-actions">
       <div class="lang-switcher">
-        <button class="lang-btn active" onclick="setLanguage('pt')" id="btn-pt">PT</button>
+        <button class="lang-btn btn-pt" onclick="setLanguage('pt')">PT</button>
         <span style="color: var(--muted); font-size: 0.8em; font-weight: 400;">|</span>
-        <button class="lang-btn" onclick="setLanguage('es')" id="btn-es">ES</button>
+        <button class="lang-btn btn-es" onclick="setLanguage('es')">ES</button>
       </div>
       <a href="https://wa.me/34618097942" class="nav-cta" target="_blank" data-i18n="nav-cta">Falar no WhatsApp →</a>
     </div>
@@ -1573,8 +1583,8 @@
       document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'es';
 
       // Update buttons
-      document.getElementById('btn-pt').classList.toggle('active', lang === 'pt');
-      document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+      document.querySelectorAll('.btn-pt').forEach(btn => btn.classList.toggle('active', lang === 'pt'));
+      document.querySelectorAll('.btn-es').forEach(btn => btn.classList.toggle('active', lang === 'es'));
 
       // Update texts
       document.querySelectorAll('[data-i18n]').forEach(el => {
