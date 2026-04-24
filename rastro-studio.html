@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rastro Studio — Soluções com IA</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    rel="stylesheet" />
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #080a0f;
+      --bg2: #0d1018;
+      --surface: #12151d;
+      --border: rgba(255, 255, 255, 0.07);
+      --accent: #0066ff;
+      --accent2: #00e5a0;
+      --text: #f0f2f7;
+      --muted: #6b7280;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      mix-blend-mode: difference;
+    }
+
+    .cursor-ring {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(0, 102, 255, 0.4);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transition: all 0.12s ease;
+    }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(8, 10, 15, 0.9);
+      border-color: var(--border);
+      backdrop-filter: blur(20px);
+      padding: 16px 48px;
+    }
+
+    .nav-logo {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo .accent {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #000;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 10px 22px;
+      border-radius: 4px;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: all 0.2s;
+    }
+
+    .nav-cta:hover {
+      background: #00b4ff;
+      transform: translateY(-1px);
+    }
+
+    /* Language Switcher */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      font-size: 0.8rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    .lang-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .lang-btn:hover {
+      color: var(--text);
+    }
+
+    .lang-btn.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Grid background */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 102, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 102, 255, 0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      background-position: 0 0;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+      animation: gridPan 15s linear infinite;
+    }
+
+    /* Glow orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+    }
+
+    .orb-1 {
+      width: 600px;
+      height: 600px;
+      background: rgba(0, 102, 255, 0.08);
+      top: -200px;
+      left: -200px;
+      animation: drift1 12s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 400px;
+      height: 400px;
+      background: rgba(0, 102, 255, 0.07);
+      bottom: -100px;
+      right: 10%;
+      animation: drift2 15s ease-in-out infinite;
+    }
+
+    @keyframes drift1 {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(40px, 30px);
+      }
+    }
+
+    @keyframes drift2 {
+
+      0%,
+      100% {
+        transform: translate(0, 0);
+      }
+
+      50% {
+        transform: translate(-30px, -40px);
+      }
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 102, 255, 0.08);
+      border: 1px solid rgba(0, 102, 255, 0.2);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      width: fit-content;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+      }
+    }
+
+    @keyframes gridPan {
+      0% {
+        background-position: 0 0;
+      }
+
+      100% {
+        background-position: 60px 60px;
+      }
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0;
+      }
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      max-width: 900px;
+      animation: fadeUp 0.8s 0.1s ease both;
+      overflow: visible !important;
+    }
+
+    .hero h1 span.hero-topline {
+      display: block;
+      overflow: visible !important;
+    }
+
+    .hero h1 .hero-subline {
+      font-style: normal;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.7);
+      position: relative;
+      z-index: 1;
+      margin-top: 8px;
+      display: block;
+    }
+
+    .hero h1 .highlight {
+      color: var(--accent);
+      position: relative;
+      z-index: 50;
+      white-space: nowrap;
+      line-height: 1.2;
+      display: block;
+      overflow: visible !important;
+    }
+
+    .hero h1 .highlight::after {
+      content: '|';
+      color: var(--accent);
+      animation: blink 1s step-end infinite;
+      margin-left: 4px;
+    }
+
+    .hero-sub {
+      margin-top: 24px;
+      font-size: 1rem;
+      color: #cbd5e1;
+      max-width: 520px;
+      line-height: 1.6;
+      font-weight: 400;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-actions {
+      margin-top: 48px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 14px 32px;
+      border-radius: 4px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: #00b4ff;
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0, 102, 255, 0.2);
+    }
+
+    .btn-secondary {
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .btn-secondary:hover {
+      color: var(--text);
+    }
+
+    .hero-metrics {
+      margin-top: 80px;
+      display: flex;
+      gap: 48px;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .metric {}
+
+    .metric-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .metric-num span {
+      color: var(--accent);
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* MARQUEE */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+      overflow: hidden;
+      background: var(--bg2);
+    }
+
+    .marquee-track {
+      display: flex;
+      gap: 48px;
+      width: max-content;
+      animation: marquee 25s linear infinite;
+    }
+
+    .marquee-item {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+
+    .marquee-item::after {
+      content: '✦';
+      color: var(--accent);
+      font-size: 0.6rem;
+    }
+
+    @keyframes marquee {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* SERVICES */
+    .section {
+      padding: 120px 48px;
+      position: relative;
+    }
+
+    .section-tag {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      max-width: 600px;
+    }
+
+    .section-title em {
+      font-style: normal;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+    }
+
+    .services-grid {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      background: var(--border);
+    }
+
+    .service-card {
+      background: var(--bg);
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .service-card:hover {
+      background: var(--surface);
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.4s ease;
+    }
+
+    .service-card:hover::before {
+      height: 100%;
+    }
+
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(0, 102, 255, 0.08);
+      border: 1px solid rgba(0, 102, 255, 0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 24px;
+    }
+
+    .service-num {
+      position: absolute;
+      top: 48px;
+      right: 48px;
+      font-family: var(--font-display);
+      font-size: 4rem;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.03);
+      line-height: 1;
+    }
+
+    .service-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .service-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .service-tags {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* PORTFOLIO */
+    .portfolio-grid {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .portfolio-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+
+    .portfolio-card:hover {
+      border-color: rgba(0, 102, 255, 0.3);
+      transform: translateY(-4px);
+    }
+
+    .portfolio-card:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .portfolio-preview {
+      height: 280px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portfolio-card:first-child .portfolio-preview {
+      height: 360px;
+    }
+
+    .portfolio-preview-inner {
+      width: 85%;
+      height: 85%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .portfolio-preview-inner.real-window {
+      justify-content: flex-start;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .site-iframe-container {
+      width: 100%;
+      height: calc(100% - 32px);
+      margin-top: 32px;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .site-iframe {
+      width: 400%;
+      height: 400%;
+      border: none;
+      transform: scale(0.25);
+      transform-origin: 0 0;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    .portfolio-card:hover .site-iframe {
+      opacity: 1;
+    }
+
+    .iframe-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(8, 10, 15, 0) 60%, rgba(8, 10, 15, 0.6) 100%);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .mock-nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 32px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 6px;
+    }
+
+    .mock-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .mock-bar {
+      flex: 1;
+      height: 14px;
+      background: var(--border);
+      border-radius: 100px;
+      margin: 0 12px;
+    }
+
+    .mock-logo {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .mock-logo span {
+      color: var(--accent);
+    }
+
+    .mock-sub {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .mock-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 60%;
+      margin-top: 8px;
+    }
+
+    .mock-line {
+      height: 6px;
+      background: var(--border);
+      border-radius: 100px;
+    }
+
+    .mock-line:nth-child(2) {
+      width: 70%;
+    }
+
+    .mock-line:nth-child(3) {
+      width: 45%;
+    }
+
+    /* Phone mock */
+    .portfolio-preview-inner.phone-window {
+      width: 180px;
+      height: 90%;
+      border-radius: 24px;
+      border: 4px solid #1a1a1a;
+      background: #0b141a; /* WhatsApp Dark Mode Background */
+      padding: 0;
+    }
+
+    .phone-status-bar {
+      height: 20px;
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 8px;
+      color: #fff;
+      opacity: 0.8;
+    }
+
+    .phone-header {
+      background: #202c33;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .phone-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .phone-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: #e9edef;
+    }
+
+    .mock-chat {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 10px;
+      flex: 1;
+      overflow-y: auto;
+      background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+      background-size: contain;
+      background-opacity: 0.05;
+    }
+
+    .mock-bubble {
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.6rem;
+      max-width: 85%;
+      line-height: 1.4;
+      position: relative;
+      box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+    }
+
+    .mock-bubble.bot {
+      background: #202c33;
+      color: #e9edef;
+      align-self: flex-start;
+      border-top-left-radius: 0;
+    }
+
+    .mock-bubble.user {
+      background: #005c4b;
+      color: #e9edef;
+      align-self: flex-end;
+      border-top-right-radius: 0;
+    }
+
+    .portfolio-info {
+      padding: 28px 32px;
+    }
+
+    .portfolio-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .portfolio-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .portfolio-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .portfolio-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: gap 0.2s;
+    }
+
+    .portfolio-link:hover {
+      gap: 10px;
+    }
+
+    /* PROCESS */
+    .process-steps {
+      margin-top: 64px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      background: var(--border);
+    }
+
+    .process-step {
+      background: var(--bg);
+      padding: 40px 32px;
+      position: relative;
+    }
+
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .step-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .step-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* CTA */
+    .cta-section {
+      margin: 0 48px 120px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 80px;
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(0, 102, 255, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+
+    .cta-section p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .footer-logo span {
+      color: var(--accent);
+    }
+
+    footer p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: all 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+
+
+    @media (max-width: 768px) {
+      nav {
+        padding: 20px 24px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding: 100px 24px 60px;
+      }
+
+      .section {
+        padding: 80px 24px;
+      }
+
+      .services-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .portfolio-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .portfolio-card:first-child {
+        grid-column: auto;
+      }
+
+      .process-steps {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .cta-section {
+        margin: 0 24px 80px;
+        padding: 48px 32px;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+        padding: 32px 24px;
+      }
+
+      .hero-metrics {
+        gap: 28px;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="nav-logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="6" width="6" height="12" rx="1" stroke="var(--accent)" stroke-width="2" />
+        <path d="M5 2V6M5 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+        <rect x="14" y="10" width="6" height="8" rx="1" fill="var(--accent)" />
+        <path d="M17 6V10M17 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <span>Rastro<span class="accent">Studio</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#servicos" data-i18n="nav-servicos">Serviços</a></li>
+      <li><a href="#portfolio" data-i18n="nav-portfolio">Portfólio</a></li>
+      <li><a href="#processo" data-i18n="nav-processo">Processo</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLanguage('pt')" id="btn-pt">PT</button>
+        <span style="color: var(--muted); font-size: 0.8em; font-weight: 400;">|</span>
+        <button class="lang-btn" onclick="setLanguage('es')" id="btn-es">ES</button>
+      </div>
+      <a href="https://wa.me/34618097942" class="nav-cta" target="_blank" data-i18n="nav-cta">Falar no WhatsApp →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <h1>
+      <span class="hero-topline" data-i18n="hero-topline">Construímos o</span>
+      <span class="highlight">futuro moderno</span>
+      <em class="hero-subline" data-i18n="hero-subline">da sua empresa</em>
+    </h1>
+    <p class="hero-sub" data-i18n="hero-sub">
+      Sites modernos, chatbots com IA e automações que trabalham por você — 24 horas por dia, 7 dias por semana.
+    </p>
+    <div class="hero-actions">
+      <a href="https://wa.me/34618097942" class="btn-primary" target="_blank" data-i18n="btn-primary">
+        Começar projeto →
+      </a>
+      <a href="#portfolio" class="btn-secondary" data-i18n="btn-secondary">
+        Ver portfólio ↓
+      </a>
+    </div>
+    <div class="hero-metrics">
+      <div class="metric">
+        <div class="metric-num">3<span>+</span></div>
+        <div class="metric-label" data-i18n="metric-projects">Projetos entregues</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num">24<span>h</span></div>
+        <div class="metric-label" data-i18n="metric-chatbots">Chatbots ativos</div>
+      </div>
+      <div class="metric">
+        <div class="metric-num">100<span>%</span></div>
+        <div class="metric-label" data-i18n="metric-focus">Foco no resultado</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span class="marquee-item" data-i18n="marquee-1">Sites Modernos</span>
+      <span class="marquee-item" data-i18n="marquee-2">Chatbots com IA</span>
+      <span class="marquee-item" data-i18n="marquee-3">Automação WhatsApp</span>
+      <span class="marquee-item" data-i18n="marquee-4">Plataformas Web</span>
+      <span class="marquee-item" data-i18n="marquee-5">Inteligência Artificial</span>
+      <span class="marquee-item" data-i18n="marquee-6">Integração de APIs</span>
+      <span class="marquee-item" data-i18n="marquee-7">Design Responsivo</span>
+      <span class="marquee-item" data-i18n="marquee-1">Sites Modernos</span>
+      <span class="marquee-item" data-i18n="marquee-2">Chatbots com IA</span>
+      <span class="marquee-item" data-i18n="marquee-3">Automação WhatsApp</span>
+      <span class="marquee-item" data-i18n="marquee-4">Plataformas Web</span>
+      <span class="marquee-item" data-i18n="marquee-5">Inteligência Artificial</span>
+      <span class="marquee-item" data-i18n="marquee-6">Integração de APIs</span>
+      <span class="marquee-item" data-i18n="marquee-7">Design Responsivo</span>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section class="section" id="servicos">
+    <div class="section-tag" data-i18n="section-tag-services">O que fazemos</div>
+    <h2 class="section-title reveal" data-i18n="section-title-services">Tecnologia que <em>trabalha</em> enquanto você descansa</h2>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-num">01</div>
+        <div class="service-icon">🌐</div>
+        <div class="service-title" data-i18n="service-1-title">Sites Modernos</div>
+        <p class="service-desc" data-i18n="service-1-desc">Landing pages e sites institucionais de alta performance com design que converte
+          visitante em cliente.</p>
+        <div class="service-tags">
+          <span class="tag">React</span>
+          <span class="tag">Next.js</span>
+          <span class="tag">Animações</span>
+          <span class="tag">SEO</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-num">02</div>
+        <div class="service-icon">🤖</div>
+        <div class="service-title" data-i18n="service-2-title">Chatbots com IA</div>
+        <p class="service-desc" data-i18n="service-2-desc">Assistentes virtuais inteligentes que entendem contexto, respondem dúvidas e convertem
+          leads automaticamente.</p>
+        <div class="service-tags">
+          <span class="tag">Claude AI</span>
+          <span class="tag">GPT-4</span>
+          <span class="tag">Memória</span>
+          <span class="tag">24/7</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-num">03</div>
+        <div class="service-icon">⚡</div>
+        <div class="service-title" data-i18n="service-3-title">Automações WhatsApp</div>
+        <p class="service-desc" data-i18n="service-3-desc">Bot no WhatsApp que atende clientes, agenda, captura leads e responde fora do horário
+          comercial.</p>
+        <div class="service-tags">
+          <span class="tag">WhatsApp API</span>
+          <span class="tag">Z-API</span>
+          <span class="tag">Agendamento</span>
+          <span class="tag">Leads</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-num">04</div>
+        <div class="service-icon">🚀</div>
+        <div class="service-title" data-i18n="service-4-title">Plataformas Web</div>
+        <p class="service-desc" data-i18n="service-4-desc">Sistemas completos com dashboard, autenticação, banco de dados e integrações — do zero
+          ao deploy.</p>
+        <div class="service-tags">
+          <span class="tag">Full Stack</span>
+          <span class="tag">Supabase</span>
+          <span class="tag">API REST</span>
+          <span class="tag">Deploy</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="section" id="portfolio" style="padding-top:0">
+    <div class="section-tag" data-i18n="section-tag-portfolio">Portfólio</div>
+    <h2 class="section-title reveal" data-i18n="section-title-portfolio">Projetos <em>reais</em>, resultados reais</h2>
+    <div class="portfolio-grid">
+
+      <div class="portfolio-card reveal">
+        <div class="portfolio-preview">
+          <div class="portfolio-preview-inner real-window">
+            <div class="mock-nav">
+              <div class="mock-dot" style="background:#ff5f57"></div>
+              <div class="mock-dot" style="background:#febc2e"></div>
+              <div class="mock-dot" style="background:#28c840"></div>
+              <div class="mock-bar" style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">rastro-sooty.vercel.app</div>
+            </div>
+            <div class="site-iframe-container">
+              <iframe src="https://rastro-sooty.vercel.app/" class="site-iframe" scrolling="no"></iframe>
+              <div class="iframe-overlay"></div>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-label" data-i18n="portfolio-1-label">Plataforma Web • IA • Mercado Financeiro</div>
+          <div class="portfolio-name" data-i18n="portfolio-1-name">Rastro — Inteligência de Mercado</div>
+          <p class="portfolio-desc" data-i18n="portfolio-1-desc">Plataforma completa de análise fundamentalista com IA para B3, S&P 500 e
+            Criptomoedas. Relatórios 360º, heatmaps, análise de sentimento por agentes de IA e portfólio personalizado.
+          </p>
+          <a href="https://rastro-sooty.vercel.app" class="portfolio-link" target="_blank" data-i18n="portfolio-1-link">Ver projeto →</a>
+        </div>
+      </div>
+
+      <div class="portfolio-card reveal">
+        <div class="portfolio-preview">
+          <div class="portfolio-preview-inner phone-window">
+            <div class="phone-status-bar">
+              <span>12:45</span>
+              <div style="display:flex; gap:3px;">📶 🔋</div>
+            </div>
+            <div class="phone-header">
+              <div class="phone-avatar">R</div>
+              <div class="phone-name">Rastro Bot</div>
+            </div>
+            <div class="mock-chat">
+              <div class="mock-bubble bot">Olá! Como posso ajudar com seus investimentos? 📈</div>
+              <div class="mock-bubble user">Analisa PETR4 pra mim</div>
+              <div class="mock-bubble bot">PETR4 tem fundamentos sólidos. Veja o relatório completo no Rastro...</div>
+              <div class="mock-bubble user">Quero assinar o Pro</div>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-label" data-i18n="portfolio-2-label">Chatbot • WhatsApp • IA</div>
+          <div class="portfolio-name" data-i18n="portfolio-2-name">Rastro Bot — Assistente WhatsApp</div>
+          <p class="portfolio-desc" data-i18n="portfolio-2-desc">Chatbot inteligente com memória de conversa integrado ao WhatsApp. Responde dúvidas
+            de mercado financeiro e apresenta a plataforma Rastro de forma consultiva.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section" id="processo">
+    <div class="section-tag" data-i18n="section-tag-process">Como trabalhamos</div>
+    <h2 class="section-title reveal" data-i18n="section-title-process">Do briefing ao <em>deploy</em> em dias</h2>
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="step-num" data-i18n="step-1-tag">01 — DESCOBERTA</div>
+        <div class="step-title" data-i18n="step-1-title">Entendemos seu negócio</div>
+        <p class="step-desc" data-i18n="step-1-desc">Conversa rápida para entender o problema, o público e o objetivo. Sem enrolação.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num" data-i18n="step-2-tag">02 — PROPOSTA</div>
+        <div class="step-title" data-i18n="step-2-title">Solução e orçamento</div>
+        <p class="step-desc" data-i18n="step-2-desc">Proposta clara com escopo, prazo e preço. Sem surpresas no meio do caminho.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num" data-i18n="step-3-tag">03 — CONSTRUÇÃO</div>
+        <div class="step-title" data-i18n="step-3-title">Desenvolvemos rápido</div>
+        <p class="step-desc" data-i18n="step-3-desc">Entregas parciais para você acompanhar. Feedback contínuo até ficar perfeito.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num" data-i18n="step-4-tag">04 — ENTREGA</div>
+        <div class="step-title" data-i18n="step-4-title">No ar e funcionando</div>
+        <p class="step-desc" data-i18n="step-4-desc">Deploy completo, treinamento e suporte. Seu projeto rodando de verdade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-section reveal">
+    <h2 data-i18n="cta-title">Pronto para começar?</h2>
+    <p data-i18n="cta-desc">Fale agora e receba uma proposta em até 24 horas.</p>
+    <div class="cta-actions">
+      <a href="https://wa.me/34618097942" class="btn-primary" target="_blank" data-i18n="cta-btn-whatsapp">
+        💬 Falar no WhatsApp
+      </a>
+      <a href="mailto:carvalhodlucas@gmail.com" class="btn-secondary" data-i18n="cta-btn-email">
+        ou enviar e-mail →
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <div class="nav-logo" style="font-size: 1.1rem; margin-bottom: 12px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="6" width="6" height="12" rx="1" stroke="var(--accent)" stroke-width="2" />
+          <path d="M5 2V6M5 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+          <rect x="14" y="10" width="6" height="8" rx="1" fill="var(--accent)" />
+          <path d="M17 6V10M17 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span>Rastro<span class="accent">Studio</span></span>
+      </div>
+    </div>
+    <p data-i18n="footer-rights">© 2025 Rastro Studio — Todos os direitos reservados</p>
+    <p style="font-size:0.8rem;color:var(--muted);" data-i18n="footer-location">Valencia, Espanha 🇪🇸</p>
+  </footer>
+
+  <script>
+    const translations = {
+      pt: {
+        'nav-servicos': 'Serviços',
+        'nav-portfolio': 'Portfólio',
+        'nav-processo': 'Processo',
+        'nav-cta': 'Falar no WhatsApp →',
+        'hero-topline': 'Construímos o',
+        'hero-subline': 'da sua empresa',
+        'hero-sub': 'Sites modernos, chatbots com IA e automações que trabalham por você — 24 horas por dia, 7 dias por semana.',
+        'btn-primary': 'Começar projeto →',
+        'btn-secondary': 'Ver portfólio ↓',
+        'metric-projects': 'Projetos entregues',
+        'metric-chatbots': 'Chatbots ativos',
+        'metric-focus': 'Foco no resultado',
+        'marquee-1': 'Sites Modernos',
+        'marquee-2': 'Chatbots com IA',
+        'marquee-3': 'Automação WhatsApp',
+        'marquee-4': 'Plataformas Web',
+        'marquee-5': 'Inteligência Artificial',
+        'marquee-6': 'Integração de APIs',
+        'marquee-7': 'Design Responsivo',
+        'section-tag-services': 'O que fazemos',
+        'section-title-services': 'Tecnologia que <em>trabalha</em> enquanto você descansa',
+        'service-1-title': 'Sites Modernos',
+        'service-1-desc': 'Landing pages e sites institucionais de alta performance com design que converte visitante em cliente.',
+        'service-2-title': 'Chatbots com IA',
+        'service-2-desc': 'Assistentes virtuais inteligentes que entendem contexto, respondem dúvidas e convertem leads automaticamente.',
+        'service-3-title': 'Automações WhatsApp',
+        'service-3-desc': 'Bot no WhatsApp que atende clientes, agenda, captura leads e responde fora do horário comercial.',
+        'service-4-title': 'Plataformas Web',
+        'service-4-desc': 'Sistemas completos com dashboard, autenticação, banco de dados e integrações — do zero ao deploy.',
+        'section-tag-portfolio': 'Portfólio',
+        'section-title-portfolio': 'Projetos <em>reais</em>, resultados reais',
+        'portfolio-1-label': 'Plataforma Web • IA • Mercado Financeiro',
+        'portfolio-1-name': 'Rastro — Inteligência de Mercado',
+        'portfolio-1-desc': 'Plataforma completa de análise fundamentalista com IA para B3, S&P 500 e Criptomoedas. Relatórios 360º, heatmaps, análise de sentimento por agentes de IA e portfólio personalizado.',
+        'portfolio-1-link': 'Ver projeto →',
+        'portfolio-2-label': 'Chatbot • WhatsApp • IA',
+        'portfolio-2-name': 'Rastro Bot — Assistente WhatsApp',
+        'portfolio-2-desc': 'Chatbot inteligente com memória de conversa integrado ao WhatsApp. Responde dúvidas de mercado financeiro e apresenta a plataforma Rastro de forma consultiva.',
+        'section-tag-process': 'Como trabalhamos',
+        'section-title-process': 'Do briefing ao <em>deploy</em> em dias',
+        'step-1-tag': '01 — DESCOBERTA',
+        'step-1-title': 'Entendemos seu negócio',
+        'step-1-desc': 'Conversa rápida para entender o problema, o público e o objetivo. Sem enrolação.',
+        'step-2-tag': '02 — PROPOSTA',
+        'step-2-title': 'Solução e orçamento',
+        'step-2-desc': 'Proposta clara com escopo, prazo e preço. Sem surpresas no meio do caminho.',
+        'step-3-tag': '03 — CONSTRUÇÃO',
+        'step-3-title': 'Desenvolvemos rápido',
+        'step-3-desc': 'Entregas parciais para você acompanhar. Feedback contínuo até ficar perfeito.',
+        'step-4-tag': '04 — ENTREGA',
+        'step-4-title': 'No ar e funcionando',
+        'step-4-desc': 'Deploy completo, treinamento e suporte. Seu projeto rodando de verdade.',
+        'cta-title': 'Pronto para começar?',
+        'cta-desc': 'Fale agora e receba uma proposta em até 24 horas.',
+        'cta-btn-whatsapp': '💬 Falar no WhatsApp',
+        'cta-btn-email': 'ou enviar e-mail →',
+        'footer-rights': '© 2025 Rastro Studio — Todos os direitos reservados',
+        'footer-location': 'Valencia, Espanha 🇪🇸',
+        'typewriter': ['futuro moderno', 'universo online', 'novo horizonte']
+      },
+      es: {
+        'nav-servicos': 'Servicios',
+        'nav-portfolio': 'Portafolio',
+        'nav-processo': 'Proceso',
+        'nav-cta': 'Hablar por WhatsApp →',
+        'hero-topline': 'Construimos el',
+        'hero-subline': 'de su empresa',
+        'hero-sub': 'Sitios modernos, chatbots con IA y automatizaciones que trabajan por usted — 24 horas al día, 7 días a la semana.',
+        'btn-primary': 'Empezar proyecto →',
+        'btn-secondary': 'Ver portafolio ↓',
+        'metric-projects': 'Proyectos entregados',
+        'metric-chatbots': 'Chatbots activos',
+        'metric-focus': 'Foco en el resultado',
+        'marquee-1': 'Sitios Modernos',
+        'marquee-2': 'Chatbots con IA',
+        'marquee-3': 'Automatización WhatsApp',
+        'marquee-4': 'Plataformas Web',
+        'marquee-5': 'Inteligencia Artificial',
+        'marquee-6': 'Integración de APIs',
+        'marquee-7': 'Diseño Responsivo',
+        'section-tag-services': 'Qué hacemos',
+        'section-title-services': 'Tecnología que <em>trabaja</em> mientras usted descansa',
+        'service-1-title': 'Sitios Modernos',
+        'service-1-desc': 'Landing pages y sitios institucionales de alto rendimiento con diseño que convierte al visitante en cliente.',
+        'service-2-title': 'Chatbots con IA',
+        'service-2-desc': 'Asistentes virtuales inteligentes que entienden el contexto, responden dudas y convierten leads automáticamente.',
+        'service-3-title': 'Automatizaciones WhatsApp',
+        'service-3-desc': 'Bot en WhatsApp que atiende clientes, agenda, captura leads y responde fuera del horario comercial.',
+        'service-4-title': 'Plataformas Web',
+        'service-4-desc': 'Sistemas completos con dashboard, autenticación, base de datos e integraciones — desde cero hasta el despliegue.',
+        'section-tag-portfolio': 'Portafolio',
+        'section-title-portfolio': 'Proyectos <em>reales</em>, resultados reales',
+        'portfolio-1-label': 'Plataforma Web • IA • Mercado Financiero',
+        'portfolio-1-name': 'Rastro — Inteligencia de Mercado',
+        'portfolio-1-desc': 'Plataforma completa de análisis fundamentalista con IA para B3, S&P 500 y Criptomonedas. Informes 360º, mapas de calor, análisis de sentimiento por agentes de IA y portafolio personalizado.',
+        'portfolio-1-link': 'Ver proyecto →',
+        'portfolio-2-label': 'Chatbot • WhatsApp • IA',
+        'portfolio-2-name': 'Rastro Bot — Asistente WhatsApp',
+        'portfolio-2-desc': 'Chatbot inteligente con memoria de conversación integrado en WhatsApp. Responde dudas del mercado financiero y presenta la plataforma Rastro de forma consultiva.',
+        'section-tag-process': 'Cómo trabajamos',
+        'section-title-process': 'Del briefing al <em>despliegue</em> en días',
+        'step-1-tag': '01 — DESCUBRIMIENTO',
+        'step-1-title': 'Entendemos su negocio',
+        'step-1-desc': 'Conversación rápida para entender el problema, el público y el objetivo. Sin rodeos.',
+        'step-2-tag': '02 — PROPUESTA',
+        'step-2-title': 'Solución y presupuesto',
+        'step-2-desc': 'Propuesta clara con alcance, plazo y precio. Sin sorpresas en el camino.',
+        'step-3-tag': '03 — CONSTRUCCIÓN',
+        'step-3-title': 'Desarrollamos rápido',
+        'step-3-desc': 'Entregas parciales para que usted haga el seguimiento. Feedback continuo hasta que sea perfecto.',
+        'step-4-tag': '04 — ENTREGA',
+        'step-4-title': 'En línea y funcionando',
+        'step-4-desc': 'Despliegue completo, formación y soporte. Su proyecto funcionando de verdad.',
+        'cta-title': '¿Listo para empezar?',
+        'cta-desc': 'Hable ahora y reciba una propuesta en menos de 24 horas.',
+        'cta-btn-whatsapp': '💬 Hablar por WhatsApp',
+        'cta-btn-email': 'o enviar correo →',
+        'footer-rights': '© 2025 Rastro Studio — Todos los derechos reservados',
+        'footer-location': 'Valencia, España 🇪🇸',
+        'typewriter': ['futuro moderno', 'universo online', 'nuevo horizonte']
+      }
+    };
+
+    let currentLang = localStorage.getItem('rastro-lang') || 'pt';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('rastro-lang', lang);
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'es';
+
+      // Update buttons
+      document.getElementById('btn-pt').classList.toggle('active', lang === 'pt');
+      document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+
+      // Update texts
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.innerHTML = translations[lang][key];
+        }
+      });
+      
+      // Update typewriter words array if typewriter exists
+      if (typeof updateTypewriterWords === 'function') {
+        updateTypewriterWords(translations[lang].typewriter);
+      }
+    }
+
+    // Initialize language on load
+    window.addEventListener('DOMContentLoaded', () => {
+      setLanguage(currentLang);
+    });
+    // Force scroll to top on reload
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    window.addEventListener('load', () => {
+      window.scrollTo(0, 0);
+      setTimeout(() => window.scrollTo(0, 0), 10);
+      setTimeout(() => window.scrollTo(0, 0), 100);
+    });
+
+    if (window.location.hash) {
+      window.history.replaceState('', document.title, window.location.pathname);
+    }
+
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx - 5 + 'px';
+      cursor.style.top = my - 5 + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx - 18) * 0.12;
+      ry += (my - ry - 18) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(2.5)');
+      el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
+    });
+
+    // Nav scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Typewriter effect
+    const typeWriterEl = document.querySelector('.hero h1 .highlight');
+    let typeWriterWords = translations[currentLang].typewriter;
+    let typeWriterWordIndex = 0;
+    let typeWriterCharIndex = 0;
+    let isDeleting = false;
+    
+    function updateTypewriterWords(newWords) {
+      typeWriterWords = newWords;
+      // Restart current word to update language smoothly
+      typeWriterCharIndex = 0;
+      isDeleting = false;
+      typeWriterWordIndex = 0;
+      typeWriterEl.textContent = '';
+    }
+
+    if (typeWriterEl) {
+      function type() {
+        const currentWord = typeWriterWords[typeWriterWordIndex];
+        if (!currentWord) return;
+
+        if (isDeleting) {
+          typeWriterCharIndex--;
+        } else {
+          typeWriterCharIndex++;
+        }
+        typeWriterEl.textContent = currentWord.substring(0, typeWriterCharIndex);
+
+        let typeSpeed = isDeleting ? 40 : 120;
+
+        if (!isDeleting && typeWriterCharIndex === currentWord.length) {
+          typeSpeed = 2500; // Pause at end of word
+          isDeleting = true;
+        } else if (isDeleting && typeWriterCharIndex === 0) {
+          isDeleting = false;
+          typeWriterWordIndex = (typeWriterWordIndex + 1) % typeWriterWords.length;
+          typeSpeed = 500; // Pause before new word
+        }
+        setTimeout(type, typeSpeed);
+      }
+      setTimeout(type, 1000);
+    }
+  </script>
+</body>
+
+</html>
