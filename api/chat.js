@@ -5,6 +5,14 @@ export default async function handler(req, res) {
 
   const { messages } = req.body;
 
+  // 1. Verificação da Chave
+  if (!process.env.GROQ_API_KEY) {
+    return res.status(500).json({ 
+      error: 'GROQ_API_KEY não configurada no Vercel.',
+      suggestion: 'Vá em Project Settings > Environment Variables e adicione a GROQ_API_KEY.'
+    });
+  }
+
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -21,9 +29,19 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+
+    // 2. Se o Groq retornar erro (ex: 401 ou 404), repassar o erro real
+    if (!response.ok) {
+      console.error("Groq API Error:", data);
+      return res.status(response.status).json({ 
+        error: 'Erro na API do Groq', 
+        details: data.error?.message || 'Erro desconhecido' 
+      });
+    }
+
     res.status(200).json(data);
   } catch (error) {
     console.error("Chat Error:", error);
-    res.status(500).json({ error: 'Failed to fetch Groq' });
+    res.status(500).json({ error: 'Falha na conexão com o servidor', details: error.message });
   }
 }

@@ -2307,12 +2307,14 @@ Mantenha o tom de voz inovador e premium.`
           const aiText = data.choices[0].message.content;
           appendMessage('bot', aiText);
         } else {
-          appendMessage('bot', "Ops, tive um probleminha técnico. Pode repetir?");
+          // Se o servidor retornou erro detalhado, mostra pro usuário
+          const errorMsg = data.details || data.error || "Ops, tive um probleminha técnico. Pode repetir?";
+          appendMessage('bot', errorMsg);
         }
       } catch (error) {
         console.error("Erro Groq:", error);
         removeLoading();
-        appendMessage('bot', "Desculpe, estou offline no momento. Você pode entrar em contato direto pelo WhatsApp!");
+        appendMessage('bot', "Desculpe, estou offline no momento. Tente novamente em instantes ou chame no WhatsApp!");
       }
     }
 
