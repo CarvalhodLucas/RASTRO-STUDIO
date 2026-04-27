@@ -40,32 +40,8 @@
       color: var(--text);
       font-family: var(--font-body);
       overflow-x: hidden;
-      cursor: none;
     }
 
-    /* Custom cursor */
-    .cursor {
-      width: 10px;
-      height: 10px;
-      background: var(--accent);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9999;
-      transition: transform 0.15s ease;
-      mix-blend-mode: difference;
-    }
-
-    .cursor-ring {
-      width: 36px;
-      height: 36px;
-      border: 1px solid rgba(0, 102, 255, 0.4);
-      border-radius: 50%;
-      position: fixed;
-      pointer-events: none;
-      z-index: 9998;
-      transition: all 0.12s ease;
-    }
 
     /* Noise overlay */
     body::before {
@@ -375,7 +351,8 @@
       font-size: clamp(2.2rem, 8vw, 4.5rem);
       font-weight: 800;
       line-height: 1.2;
-      letter-spacing: 0.01em; /* Levemente positivo para evitar colisão */
+      letter-spacing: 0.01em;
+      /* Levemente positivo para evitar colisão */
       max-width: 900px;
       animation: fadeUp 0.8s 0.1s ease both;
       overflow: visible !important;
@@ -840,7 +817,8 @@
       height: 90%;
       border-radius: 24px;
       border: 4px solid #1a1a1a;
-      background: #0b141a; /* WhatsApp Dark Mode Background */
+      background: #0b141a;
+      /* WhatsApp Dark Mode Background */
       padding: 0;
     }
 
@@ -902,7 +880,7 @@
       max-width: 85%;
       line-height: 1.4;
       position: relative;
-      box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+      box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
     }
 
     .mock-bubble.bot {
@@ -1129,17 +1107,17 @@
       .nav-actions {
         display: none;
       }
-      
+
       .mobile-only {
-          display: flex !important;
-          flex-direction: column;
-          align-items: center;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
       }
 
       .hero h1 {
         font-size: clamp(1.8rem, 8vw, 2.4rem);
         line-height: 1.1;
-        min-height: 220px; 
+        min-height: 220px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -1171,7 +1149,8 @@
         margin-top: 32px;
       }
 
-      .btn-primary, .btn-secondary {
+      .btn-primary,
+      .btn-secondary {
         width: 100%;
         justify-content: center;
       }
@@ -1181,9 +1160,9 @@
         gap: 20px;
         margin-top: 48px;
       }
-      
+
       .metric-num {
-          font-size: 1.8rem;
+        font-size: 1.8rem;
       }
 
       .hero {
@@ -1227,13 +1206,223 @@
         flex-wrap: wrap;
       }
     }
+
+    /* CHATBOX */
+    .chatbox-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+
+    .chatbox-window {
+      width: 800px;
+      max-width: calc(100vw - 60px);
+      height: 600px;
+      background: rgba(18, 21, 29, 0.8);
+      backdrop-filter: blur(25px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: all;
+      margin-bottom: 20px;
+    }
+
+    .chatbox-window.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .chatbox-header {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chatbox-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .chatbox-status {
+      width: 8px;
+      height: 8px;
+      background: var(--accent2);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent2);
+    }
+
+    .chatbox-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: color 0.2s;
+    }
+
+    .chatbox-close:hover {
+      color: var(--text);
+    }
+
+    .chatbox-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-msg {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      position: relative;
+      animation: msgFade 0.3s ease both;
+    }
+
+    @keyframes msgFade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .chat-msg.bot {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-msg.user {
+      background: var(--accent);
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chatbox-input-area {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+    }
+
+    .chatbox-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 15px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chatbox-input:focus {
+      border-color: var(--accent);
+    }
+
+    .chatbox-send {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .chatbox-send:hover {
+      transform: scale(1.05);
+    }
+
+    .chat-loading {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      align-self: flex-start;
+      width: fit-content;
+    }
+
+    .chat-loading span {
+      width: 6px;
+      height: 6px;
+      background: var(--muted);
+      border-radius: 50%;
+      animation: chatLoading 1.4s infinite;
+    }
+
+    .chat-loading span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .chat-loading span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes chatLoading {
+
+      0%,
+      100% {
+        transform: translateY(0);
+        opacity: 0.4;
+      }
+
+      50% {
+        transform: translateY(-4px);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chatbox-window {
+        width: calc(100vw - 40px);
+        height: 70vh;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
   </style>
 </head>
 
 <body>
-
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
 
   <!-- NAV -->
   <nav id="nav">
@@ -1244,18 +1433,18 @@
         <rect x="14" y="10" width="6" height="8" rx="1" fill="var(--accent)" />
         <path d="M17 6V10M17 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
       </svg>
-      <span>Rastro<span class="accent">Studio</span></span>
+      <span data-i18n="nav-logo">Rastro<span class="accent">Studio</span></span>
     </a>
     <ul class="nav-links" id="navLinks">
       <li><a href="#servicos" data-i18n="nav-servicos" onclick="closeMenu()">Serviços</a></li>
       <li><a href="#portfolio" data-i18n="nav-portfolio" onclick="closeMenu()">Portfólio</a></li>
       <li><a href="#processo" data-i18n="nav-processo" onclick="closeMenu()">Processo</a></li>
       <li class="mobile-only">
-          <div class="lang-switcher" style="margin-top: 20px;">
-            <button class="lang-btn btn-pt" onclick="setLanguage('pt')">PT</button>
-            <span style="color: var(--muted); font-size: 0.8em; font-weight: 400;">|</span>
-            <button class="lang-btn btn-es" onclick="setLanguage('es')">ES</button>
-          </div>
+        <div class="lang-switcher" style="margin-top: 20px;">
+          <button class="lang-btn btn-pt" onclick="setLanguage('pt')">PT</button>
+          <span style="color: var(--muted); font-size: 0.8em; font-weight: 400;">|</span>
+          <button class="lang-btn btn-es" onclick="setLanguage('es')">ES</button>
+        </div>
       </li>
     </ul>
     <div class="nav-actions">
@@ -1266,9 +1455,9 @@
       </div>
     </div>
     <button class="mobile-toggle" id="menuToggle" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
   </nav>
 
@@ -1285,7 +1474,7 @@
       Sites modernos, chatbots com IA e automações que trabalham por você — 24 horas por dia, 7 dias por semana.
     </p>
     <div class="hero-actions" style="position: relative; z-index: 10;">
-      <a href="https://wa.me/34618097942" class="btn-primary" target="_blank">
+      <a href="javascript:void(0)" class="btn-primary" onclick="toggleChat()">
         <span data-i18n="btn-primary">Começar projeto →</span>
       </a>
       <a href="#portfolio" class="btn-secondary">
@@ -1294,7 +1483,7 @@
     </div>
     <div class="hero-metrics">
       <div class="metric">
-        <div class="metric-num">3<span>+</span></div>
+        <div class="metric-num">5<span>+</span></div>
         <div class="metric-label" data-i18n="metric-projects">Projetos entregues</div>
       </div>
       <div class="metric">
@@ -1331,13 +1520,15 @@
   <!-- SERVICES -->
   <section class="section" id="servicos">
     <div class="section-tag" data-i18n="section-tag-services">O que fazemos</div>
-    <h2 class="section-title reveal" data-i18n="section-title-services">Tecnologia que <em>trabalha</em> enquanto você descansa</h2>
+    <h2 class="section-title reveal" data-i18n="section-title-services">Tecnologia que <em>trabalha</em> enquanto você
+      descansa</h2>
     <div class="services-grid">
       <div class="service-card reveal">
         <div class="service-num">01</div>
         <div class="service-icon">🌐</div>
         <div class="service-title" data-i18n="service-1-title">Sites Modernos</div>
-        <p class="service-desc" data-i18n="service-1-desc">Landing pages e sites institucionais de alta performance com design que converte
+        <p class="service-desc" data-i18n="service-1-desc">Landing pages e sites institucionais de alta performance com
+          design que converte
           visitante em cliente.</p>
         <div class="service-tags">
           <span class="tag">React</span>
@@ -1350,7 +1541,8 @@
         <div class="service-num">02</div>
         <div class="service-icon">🤖</div>
         <div class="service-title" data-i18n="service-2-title">Chatbots com IA</div>
-        <p class="service-desc" data-i18n="service-2-desc">Assistentes virtuais inteligentes que entendem contexto, respondem dúvidas e convertem
+        <p class="service-desc" data-i18n="service-2-desc">Assistentes virtuais inteligentes que entendem contexto,
+          respondem dúvidas e convertem
           leads automaticamente.</p>
         <div class="service-tags">
           <span class="tag">Claude AI</span>
@@ -1363,7 +1555,8 @@
         <div class="service-num">03</div>
         <div class="service-icon">⚡</div>
         <div class="service-title" data-i18n="service-3-title">Automações WhatsApp</div>
-        <p class="service-desc" data-i18n="service-3-desc">Bot no WhatsApp que atende clientes, agenda, captura leads e responde fora do horário
+        <p class="service-desc" data-i18n="service-3-desc">Bot no WhatsApp que atende clientes, agenda, captura leads e
+          responde fora do horário
           comercial.</p>
         <div class="service-tags">
           <span class="tag">WhatsApp API</span>
@@ -1376,7 +1569,8 @@
         <div class="service-num">04</div>
         <div class="service-icon">🚀</div>
         <div class="service-title" data-i18n="service-4-title">Plataformas Web</div>
-        <p class="service-desc" data-i18n="service-4-desc">Sistemas completos com dashboard, autenticação, banco de dados e integrações — do zero
+        <p class="service-desc" data-i18n="service-4-desc">Sistemas completos com dashboard, autenticação, banco de
+          dados e integrações — do zero
           ao deploy.</p>
         <div class="service-tags">
           <span class="tag">Full Stack</span>
@@ -1401,7 +1595,9 @@
               <div class="mock-dot" style="background:#ff5f57"></div>
               <div class="mock-dot" style="background:#febc2e"></div>
               <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar" style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">rastro-sooty.vercel.app</div>
+              <div class="mock-bar"
+                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
+                rastro-sooty.vercel.app</div>
             </div>
             <div class="site-iframe-container">
               <iframe src="https://rastro-sooty.vercel.app/" class="site-iframe" scrolling="no"></iframe>
@@ -1412,10 +1608,12 @@
         <div class="portfolio-info">
           <div class="portfolio-label" data-i18n="portfolio-1-label">Plataforma Web • IA • Mercado Financeiro</div>
           <div class="portfolio-name" data-i18n="portfolio-1-name">Rastro — Inteligência de Mercado</div>
-          <p class="portfolio-desc" data-i18n="portfolio-1-desc">Plataforma completa de análise fundamentalista com IA para B3, S&P 500 e
+          <p class="portfolio-desc" data-i18n="portfolio-1-desc">Plataforma completa de análise fundamentalista com IA
+            para B3, S&P 500 e
             Criptomoedas. Relatórios 360º, heatmaps, análise de sentimento por agentes de IA e portfólio personalizado.
           </p>
-          <a href="https://rastro-sooty.vercel.app" class="portfolio-link" target="_blank" data-i18n="portfolio-1-link">Ver projeto →</a>
+          <a href="https://rastro-sooty.vercel.app" class="portfolio-link" target="_blank"
+            data-i18n="portfolio-1-link">Ver projeto →</a>
         </div>
       </div>
 
@@ -1426,7 +1624,9 @@
               <div class="mock-dot" style="background:#ff5f57"></div>
               <div class="mock-dot" style="background:#febc2e"></div>
               <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar" style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">carvalhodlucas.github.io/Horizonte</div>
+              <div class="mock-bar"
+                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
+                carvalhodlucas.github.io/Horizonte</div>
             </div>
             <div class="site-iframe-container">
               <iframe src="https://carvalhodlucas.github.io/Horizonte/" class="site-iframe" scrolling="no"></iframe>
@@ -1435,21 +1635,26 @@
           </div>
         </div>
         <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-2-label">Gestão de Patrimônio • Landing Page • Finanças</div>
+          <div class="portfolio-label" data-i18n="portfolio-2-label">Gestão de Patrimônio • Landing Page • Finanças
+          </div>
           <div class="portfolio-name" data-i18n="portfolio-2-name">Horizonte Capital</div>
-          <p class="portfolio-desc" data-i18n="portfolio-2-desc">Landing page premium para gestão de patrimônio e investimentos. Foco em design limpo, confiança e conversão de clientes de alto padrão.</p>
-          <a href="https://carvalhodlucas.github.io/Horizonte/" class="portfolio-link" target="_blank" data-i18n="portfolio-2-link">Ver projeto →</a>
+          <p class="portfolio-desc" data-i18n="portfolio-2-desc">Landing page premium para gestão de patrimônio e
+            investimentos. Foco em design limpo, confiança e conversão de clientes de alto padrão.</p>
+          <a href="https://carvalhodlucas.github.io/Horizonte/" class="portfolio-link" target="_blank"
+            data-i18n="portfolio-2-link">Ver projeto →</a>
         </div>
       </div>
 
-        <div class="portfolio-card reveal">
+      <div class="portfolio-card reveal">
         <div class="portfolio-preview">
           <div class="portfolio-preview-inner real-window">
             <div class="mock-nav">
               <div class="mock-dot" style="background:#ff5f57"></div>
               <div class="mock-dot" style="background:#febc2e"></div>
               <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar" style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">carvalhodlucas.github.io/bicirastro</div>
+              <div class="mock-bar"
+                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
+                carvalhodlucas.github.io/bicirastro</div>
             </div>
             <div class="site-iframe-container">
               <iframe src="https://carvalhodlucas.github.io/bicirastro/" class="site-iframe" scrolling="no"></iframe>
@@ -1458,14 +1663,102 @@
           </div>
         </div>
         <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-3-label">Mobilidade Urbana • Site Institucional • Aluguel</div>
+          <div class="portfolio-label" data-i18n="portfolio-3-label">Mobilidade Urbana • Site Institucional • Aluguel
+          </div>
           <div class="portfolio-name" data-i18n="portfolio-3-name">BiciRastro</div>
-          <p class="portfolio-desc" data-i18n="portfolio-3-desc">Plataforma premium para aluguel de bicicletas e mobilidade urbana. Foco em experiência do usuário fluida e design moderno para conversão de reservas.</p>
-          <a href="https://carvalhodlucas.github.io/bicirastro/" class="portfolio-link" target="_blank" data-i18n="portfolio-3-link">Ver projeto →</a>
+          <p class="portfolio-desc" data-i18n="portfolio-3-desc">Plataforma premium para aluguel de bicicletas e
+            mobilidade urbana. Foco em experiência do usuário fluida e design moderno para conversão de reservas.</p>
+          <a href="https://carvalhodlucas.github.io/bicirastro/" class="portfolio-link" target="_blank"
+            data-i18n="portfolio-3-link">Ver projeto →</a>
         </div>
       </div>
 
-    </div>
+      <div class="portfolio-card reveal">
+        <div class="portfolio-preview">
+          <div class="portfolio-preview-inner real-window">
+            <div class="mock-nav">
+              <div class="mock-dot" style="background:#ff5f57"></div>
+              <div class="mock-dot" style="background:#febc2e"></div>
+              <div class="mock-dot" style="background:#28c840"></div>
+              <div class="mock-bar"
+                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
+                carvalhodlucas.github.io/advrastro</div>
+            </div>
+            <div class="site-iframe-container">
+              <iframe src="https://carvalhodlucas.github.io/advrastro/" class="site-iframe" scrolling="no"></iframe>
+              <div class="iframe-overlay"></div>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-label" data-i18n="portfolio-4-label">Advocacia • Site Institucional • Direito
+            Trabalhista</div>
+          <div class="portfolio-name" data-i18n="portfolio-4-name">Rastro Advocacia</div>
+          <p class="portfolio-desc" data-i18n="portfolio-4-desc">Site institucional para escritório de advocacia
+            especializado em Direito do Trabalho. Design sóbrio, profissional e focado em converter leads qualificados.
+          </p>
+          <a href="https://carvalhodlucas.github.io/advrastro/" class="portfolio-link" target="_blank"
+            data-i18n="portfolio-4-link">Ver projeto →</a>
+        </div>
+      </div>
+
+      <div class="portfolio-card reveal">
+        <div class="portfolio-preview">
+          <div class="portfolio-preview-inner real-window">
+            <div class="mock-nav">
+              <div class="mock-dot" style="background:#ff5f57"></div>
+              <div class="mock-dot" style="background:#febc2e"></div>
+              <div class="mock-dot" style="background:#28c840"></div>
+              <div class="mock-bar"
+                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
+                carvalhodlucas.github.io/rastroclinica</div>
+            </div>
+            <div class="site-iframe-container">
+              <iframe src="https://carvalhodlucas.github.io/rastroclinica/" class="site-iframe" scrolling="no"></iframe>
+              <div class="iframe-overlay"></div>
+            </div>
+          </div>
+        </div>
+        <div class="portfolio-info">
+          <div class="portfolio-label" data-i18n="portfolio-5-label">Saúde & Bem-estar • Site Institucional •
+            Agendamento</div>
+          <div class="portfolio-name" data-i18n="portfolio-5-name">Rastro Clínica</div>
+          <p class="portfolio-desc" data-i18n="portfolio-5-desc">Instituição médica completa que oferece atendimento de
+            excelência em diversas especialidades, com foco em tecnologia avançada e cuidado humanizado para toda a
+            família.</p>
+          <a href="https://carvalhodlucas.github.io/rastroclinica/" class="portfolio-link" target="_blank"
+            data-i18n="portfolio-5-link">Ver projeto →</a>
+        </div>
+        <div class="portfolio-card reveal">
+          <div class="portfolio-preview">
+            <div class="portfolio-preview-inner real-window">
+              <div class="mock-nav">
+                <div class="mock-dot" style="background:#ff5f57"></div>
+                <div class="mock-dot" style="background:#febc2e"></div>
+                <div class="mock-dot" style="background:#28c840"></div>
+                <div class="mock-bar"
+                  style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
+                  carvalhodlucas.github.io/rastroimoveis</div>
+              </div>
+              <div class="site-iframe-container">
+                <iframe src="https://carvalhodlucas.github.io/rastroimoveis/" class="site-iframe"
+                  scrolling="no"></iframe>
+                <div class="iframe-overlay"></div>
+              </div>
+            </div>
+          </div>
+          <div class="portfolio-info">
+            <div class="portfolio-label" data-i18n="portfolio-6-label">Imobiliária • Site Institucional • Luxo</div>
+            <div class="portfolio-name" data-i18n="portfolio-6-name">Rastro Imóveis</div>
+            <p class="portfolio-desc" data-i18n="portfolio-6-desc">Imobiliária premium com curadoria exclusiva de
+              imóveis para compra e aluguel. Possui assistente virtual inteligente integrado para suporte em tempo real
+              e agendamento de visitas.</p>
+            <a href="https://carvalhodlucas.github.io/rastroimoveis/" class="portfolio-link" target="_blank"
+              data-i18n="portfolio-6-link">Ver projeto →</a>
+          </div>
+        </div>
+
+      </div>
   </section>
 
   <!-- PROCESS -->
@@ -1476,22 +1769,26 @@
       <div class="process-step reveal">
         <div class="step-num" data-i18n="step-1-tag">01 — DESCOBERTA</div>
         <div class="step-title" data-i18n="step-1-title">Entendemos seu negócio</div>
-        <p class="step-desc" data-i18n="step-1-desc">Conversa rápida para entender o problema, o público e o objetivo. Sem enrolação.</p>
+        <p class="step-desc" data-i18n="step-1-desc">Conversa rápida para entender o problema, o público e o objetivo.
+          Sem enrolação.</p>
       </div>
       <div class="process-step reveal">
         <div class="step-num" data-i18n="step-2-tag">02 — PROPOSTA</div>
         <div class="step-title" data-i18n="step-2-title">Solução e orçamento</div>
-        <p class="step-desc" data-i18n="step-2-desc">Proposta clara com escopo, prazo e preço. Sem surpresas no meio do caminho.</p>
+        <p class="step-desc" data-i18n="step-2-desc">Proposta clara com escopo, prazo e preço. Sem surpresas no meio do
+          caminho.</p>
       </div>
       <div class="process-step reveal">
         <div class="step-num" data-i18n="step-3-tag">03 — CONSTRUÇÃO</div>
         <div class="step-title" data-i18n="step-3-title">Desenvolvemos rápido</div>
-        <p class="step-desc" data-i18n="step-3-desc">Entregas parciais para você acompanhar. Feedback contínuo até ficar perfeito.</p>
+        <p class="step-desc" data-i18n="step-3-desc">Entregas parciais para você acompanhar. Feedback contínuo até ficar
+          perfeito.</p>
       </div>
       <div class="process-step reveal">
         <div class="step-num" data-i18n="step-4-tag">04 — ENTREGA</div>
         <div class="step-title" data-i18n="step-4-title">No ar e funcionando</div>
-        <p class="step-desc" data-i18n="step-4-desc">Deploy completo, treinamento e suporte. Seu projeto rodando de verdade.</p>
+        <p class="step-desc" data-i18n="step-4-desc">Deploy completo, treinamento e suporte. Seu projeto rodando de
+          verdade.</p>
       </div>
     </div>
   </section>
@@ -1520,12 +1817,39 @@
           <rect x="14" y="10" width="6" height="8" rx="1" fill="var(--accent)" />
           <path d="M17 6V10M17 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
         </svg>
-        <span>Rastro<span class="accent">Studio</span></span>
+        <span data-i18n="nav-logo">Rastro<span class="accent">Studio</span></span>
       </div>
     </div>
     <p data-i18n="footer-rights">© 2025 Rastro Studio — Todos os direitos reservados</p>
     <p style="font-size:0.8rem;color:var(--muted);" data-i18n="footer-location">Valencia, Espanha 🇪🇸</p>
   </footer>
+
+  <!-- CHATBOX -->
+  <div class="chatbox-container" id="chatboxContainer">
+    <div class="chatbox-window" id="chatboxWindow">
+      <div class="chatbox-header">
+        <div class="chatbox-title">
+          <div class="chatbox-status"></div>
+          <span data-i18n="chat-title">Rastro Studio IA</span>
+        </div>
+        <button class="chatbox-close" onclick="toggleChat()">×</button>
+      </div>
+      <div class="chatbox-messages" id="chatMessages">
+        <!-- Messages will appear here -->
+      </div>
+      <div class="chatbox-input-area">
+        <input type="text" class="chatbox-input" id="chatInput" data-i18n-placeholder="chat-input-placeholder" placeholder="Sua mensagem..."
+          onkeypress="handleChatKey(event)">
+        <button class="chatbox-send" onclick="sendChatMessage()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const translations = {
@@ -1573,6 +1897,18 @@
         'portfolio-3-name': 'BiciRastro',
         'portfolio-3-desc': 'Plataforma premium para aluguel de bicicletas e mobilidade urbana. Foco em experiência do usuário fluida e design moderno para conversão de reservas.',
         'portfolio-3-link': 'Ver projeto →',
+        'portfolio-4-label': 'Advocacia • Site Institucional • Direito Trabalhista',
+        'portfolio-4-name': 'Rastro Advocacia',
+        'portfolio-4-desc': 'Site institucional para escritório de advocacia especializado em Direito do Trabalho. Design sóbrio, profissional e focado em converter leads qualificados.',
+        'portfolio-4-link': 'Ver projeto →',
+        'portfolio-5-label': 'Saúde & Bem-estar • Site Institucional • Agendamento',
+        'portfolio-5-name': 'Rastro Clínica',
+        'portfolio-5-desc': 'Instituição médica completa que oferece atendimento de excelência em diversas especialidades, com foco em tecnologia avançada e cuidado humanizado para toda a família.',
+        'portfolio-5-link': 'Ver projeto →',
+        'portfolio-6-label': 'Imobiliária • Site Institucional • Luxo',
+        'portfolio-6-name': 'Rastro Imóveis',
+        'portfolio-6-desc': 'Imobiliária premium com curadoria exclusiva de imóveis para compra e aluguel. Possui assistente virtual inteligente integrado para suporte em tempo real e agendamento de visitas.',
+        'portfolio-6-link': 'Ver projeto →',
         'section-tag-process': 'Como trabalhamos',
         'section-title-process': 'Do briefing ao <em>deploy</em> em dias',
         'step-1-tag': '01 — DESCOBERTA',
@@ -1593,6 +1929,10 @@
         'cta-btn-email': 'ou enviar e-mail →',
         'footer-rights': '© 2025 Rastro Studio — Todos os direitos reservados',
         'footer-location': 'Valencia, Espanha 🇪🇸',
+        'site-title': 'Rastro Studio — Soluções com IA',
+        'chat-title': 'Rastro Studio IA',
+        'chat-input-placeholder': 'Sua mensagem...',
+        'nav-logo': 'Rastro<span class="accent">Studio</span>',
         'typewriter': ['futuro moderno', 'universo online', 'novo horizonte']
       },
       es: {
@@ -1639,6 +1979,18 @@
         'portfolio-3-name': 'BiciRastro',
         'portfolio-3-desc': 'Plataforma premium para alquiler de bicicletas y movilidad urbana. Enfoque en una experiencia de usuario fluida y diseño moderno para conversión de reservas.',
         'portfolio-3-link': 'Ver proyecto →',
+        'portfolio-4-label': 'Abogacía • Sitio Institucional • Derecho Laboral',
+        'portfolio-4-name': 'Rastro Abogacía',
+        'portfolio-4-desc': 'Sitio institucional para un bufete de abogados especializado en Derecho Laboral. Diseño sobrio, profesional y enfocado en convertir leads cualificados.',
+        'portfolio-4-link': 'Ver proyecto →',
+        'portfolio-5-label': 'Salud & Bienestar • Sitio Institucional • Citas',
+        'portfolio-5-name': 'Rastro Clínica',
+        'portfolio-5-desc': 'Institución médica integral que ofrece atención de excelencia en diversas especialidades, con enfoque en tecnología avanzada y cuidado humanizado para toda la familia.',
+        'portfolio-5-link': 'Ver proyecto →',
+        'portfolio-6-label': 'Inmobiliaria • Sitio Institucional • Lujo',
+        'portfolio-6-name': 'Rastro Inmuebles',
+        'portfolio-6-desc': 'Inmobiliaria premium con curaduría exclusiva de inmuebles para compra y alquiler. Cuenta con asistente virtual inteligente integrado para soporte en tiempo real y programación de visitas.',
+        'portfolio-6-link': 'Ver proyecto →',
         'section-tag-process': 'Cómo trabajamos',
         'section-title-process': 'Del briefing al <em>despliegue</em> en días',
         'step-1-tag': '01 — DESCUBRIMIENTO',
@@ -1659,6 +2011,10 @@
         'cta-btn-email': 'o enviar correo →',
         'footer-rights': '© 2025 Rastro Studio — Todos los derechos reservados',
         'footer-location': 'Valencia, España 🇪🇸',
+        'site-title': 'Rastro Studio — Soluciones con IA',
+        'chat-title': 'Rastro Studio IA',
+        'chat-input-placeholder': 'Su mensaje...',
+        'nav-logo': 'Rastro<span class="accent">Studio</span>',
         'typewriter': ['futuro moderno', 'universo online', 'nuevo horizonte']
       }
     };
@@ -1681,7 +2037,20 @@
           el.innerHTML = translations[lang][key];
         }
       });
-      
+
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (translations[lang] && translations[lang][key]) {
+          el.placeholder = translations[lang][key];
+        }
+      });
+
+      // Update document title
+      if (translations[lang]['site-title']) {
+        document.title = translations[lang]['site-title'];
+      }
+
       // Update typewriter words array if typewriter exists
       if (typeof updateTypewriterWords === 'function') {
         updateTypewriterWords(translations[lang].typewriter);
@@ -1708,31 +2077,6 @@
       window.history.replaceState('', document.title, window.location.pathname);
     }
 
-    // Custom cursor
-    const cursor = document.getElementById('cursor');
-    const ring = document.getElementById('cursorRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-      cursor.style.left = mx - 5 + 'px';
-      cursor.style.top = my - 5 + 'px';
-    });
-
-    function animateRing() {
-      rx += (mx - rx - 18) * 0.12;
-      ry += (my - ry - 18) * 0.12;
-      ring.style.left = rx + 'px';
-      ring.style.top = ry + 'px';
-      requestAnimationFrame(animateRing);
-    }
-    animateRing();
-
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.style.transform = 'scale(2.5)');
-      el.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1)');
-    });
-
     // Nav scroll
     window.addEventListener('scroll', () => {
       document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
@@ -1751,7 +2095,7 @@
     let typeWriterWordIndex = 0;
     let typeWriterCharIndex = 0;
     let isDeleting = false;
-    
+
     function updateTypewriterWords(newWords) {
       typeWriterWords = newWords;
       // Restart current word to update language smoothly
@@ -1802,6 +2146,178 @@
         setTimeout(type, typeSpeed);
       }
       setTimeout(type, 1000);
+    }
+
+    // --- CHATBOX LOGIC ---
+    const chatWindow = document.getElementById('chatboxWindow');
+    const chatMessagesEl = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    let chatHistory = [];
+    let isChatOpen = false;
+    let hasInitialized = false;
+
+    function toggleChat() {
+      isChatOpen = !isChatOpen;
+      chatWindow.classList.toggle('active', isChatOpen);
+      if (isChatOpen && !hasInitialized) {
+        initChat();
+      }
+      if (isChatOpen) {
+        setTimeout(() => chatInput.focus(), 400);
+      }
+    }
+
+    function initChat() {
+      hasInitialized = true;
+      const welcomeMsg = currentLang === 'pt'
+        ? "Olá! Sou o assistente IA do Rastro Studio. 🚀\n\nFico feliz que queira começar um projeto conosco! Para eu te ajudar da melhor forma, me conte: qual é o seu objetivo principal hoje? (ex: Criar um site, um chatbot, automação...)"
+        : "¡Hola! Soy el asistente IA de Rastro Studio. 🚀\n\n¡Me alegra que quieras empezar un proyecto con nosotros! Para ayudarte mejor, cuéntame: ¿cuál es tu objetivo principal hoy? (ej: Crear un sitio web, un chatbot, automatización...)";
+
+      appendMessage('bot', welcomeMsg);
+
+      // System prompt for the AI
+      chatHistory.push({
+        role: "system",
+        content: `Você é o assistente virtual da Rastro Studio, uma agência de tecnologia especializada em sites modernos, chatbots com IA e automações.
+Seu objetivo é ser extremamente profissional, moderno, prestativo e direto ao ponto.
+Você deve guiar o cliente em uma "conversa de descoberta" para entender o projeto dele.
+
+TABELA DE PREÇOS (REFERÊNCIA):
+Espanha:
+- Site institucional simples: €500 – €1.500
+- Site moderno com animações: €1.500 – €4.000
+- Chatbot com IA no site: €800 – €2.000
+- Bot WhatsApp com IA: €1.000 – €2.500
+- Dashboard CRM WhatsApp: €1.500 – €3.500
+- Sistema completo (site + bot + CRM): €3.500 – €8.000
+- Manutenção mensal: €100 – €400/mês
+
+Brasil — Remoto:
+- Site institucional simples: R$800 – R$2.500
+- Site moderno com animações: R$2.500 – R$6.000
+- Chatbot com IA no site: R$1.500 – R$3.500
+- Bot WhatsApp com IA: R$1.500 – R$4.000
+- Dashboard CRM WhatsApp: R$2.000 – R$5.000
+- Sistema completo (site + bot + CRM): R$5.500 – R$12.000
+- Manutenção mensal: R$300 – R$800/mês
+
+Siga estas diretrizes:
+1. Responda no idioma do cliente (${currentLang === 'pt' ? 'Português' : 'Espanhol'}).
+2. Faça uma pergunta por vez para não sobrecarregar o cliente.
+3. JAMAIS mencione preços ou valores a menos que o cliente pergunte explicitamente sobre isso. Se ele perguntar, use a tabela acima apenas como uma estimativa inicial.
+4. Tente entender: 
+   - Tipo de projeto (Site, Chatbot, Sistema, etc).
+   - O que o negócio faz.
+   - Funcionalidades principais desejadas.
+5. No final da conversa (quando sentir que tem o básico), peça educadamente:
+   - Nome do contato.
+   - E-mail.
+   - WhatsApp.
+6. Quando receber estas informações (Nome, E-mail e WhatsApp), gere um breve resumo do que foi discutido e diga que o Lucas entrará em contato em breve. Adicione obrigatoriamente o código [L-DONE] ao final desta mensagem para que o sistema processe o envio.
+7. REGRA DE OURO: JAMAIS finalize a conversa ou use o código [L-DONE] se o cliente não tiver fornecido os TRÊS dados obrigatórios: Nome, E-mail e WhatsApp. Se faltar qualquer um deles, peça-o educadamente antes de fazer o resumo final.
+
+Mantenha o tom de voz inovador e premium.`
+      });
+    }
+
+    let emailSent = false;
+    let whatsappSent = false;
+
+    // Configurações de notificação movidas para /api/notify
+    const MY_PHONE_NUMBER = "34618097942"; 
+
+    async function finalizeConversation() {
+      const fullHistory = chatHistory
+        .filter(m => m.role !== 'system')
+        .map(m => `${m.role === 'assistant' ? 'IA' : 'Cliente'}: ${m.content}`)
+        .join('\n');
+
+      const lastBotMsg = chatHistory.filter(m => m.role === 'assistant').slice(-1)[0]?.content || "";
+      const shortSummary = `📌 *RESUMO DO PROJETO*\n\n${lastBotMsg}`;
+
+      // Envia notificações via API serverless (seguro)
+      try {
+        await fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ summary: shortSummary, fullHistory: fullHistory })
+        });
+        console.log("Notificações enviadas via servidor");
+      } catch (err) {
+        console.error("Erro ao enviar notificações:", err);
+      }
+    }
+
+    function appendMessage(role, text) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-msg ${role}`;
+      let displayText = text.replace('[L-DONE]', '');
+      msgDiv.innerHTML = displayText.replace(/\n/g, '<br>');
+      chatMessagesEl.appendChild(msgDiv);
+
+      if (role !== 'system') {
+        chatHistory.push({ role: role === 'bot' ? 'assistant' : 'user', content: text });
+      }
+
+      // Envia resumo por e-mail e WhatsApp automaticamente se detectar o código de finalização
+      if (role === 'bot' && text.includes('[L-DONE]')) {
+        finalizeConversation();
+      }
+
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    function showLoading() {
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'chat-loading';
+      loadingDiv.id = 'chatLoading';
+      loadingDiv.innerHTML = '<span></span><span></span><span></span>';
+      chatMessagesEl.appendChild(loadingDiv);
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    function removeLoading() {
+      const loading = document.getElementById('chatLoading');
+      if (loading) loading.remove();
+    }
+
+    async function sendChatMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      chatInput.value = '';
+      appendMessage('user', text);
+      showLoading();
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messages: chatHistory
+          })
+        });
+
+        const data = await response.json();
+        removeLoading();
+
+        if (data.choices && data.choices[0]) {
+          const aiText = data.choices[0].message.content;
+          appendMessage('bot', aiText);
+        } else {
+          appendMessage('bot', "Ops, tive um probleminha técnico. Pode repetir?");
+        }
+      } catch (error) {
+        console.error("Erro Groq:", error);
+        removeLoading();
+        appendMessage('bot', "Desculpe, estou offline no momento. Você pode entrar em contato direto pelo WhatsApp!");
+      }
+    }
+
+    function handleChatKey(e) {
+      if (e.key === 'Enter') sendChatMessage();
     }
   </script>
 </body>
