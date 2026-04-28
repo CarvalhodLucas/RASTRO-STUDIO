@@ -1419,10 +1419,112 @@
         right: 20px;
       }
     }
+
+    /* INITIAL LANG MODAL */
+    .lang-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 10, 15, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .lang-modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lang-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px;
+      width: 90%;
+      max-width: 480px;
+      text-align: center;
+      transform: translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .lang-modal-overlay.active .lang-modal {
+      transform: translateY(0);
+    }
+
+    .lang-modal h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .lang-modal p {
+      color: var(--muted);
+      margin-bottom: 32px;
+      font-size: 0.9rem;
+    }
+
+    .lang-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .lang-option {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      padding: 16px 24px;
+      border-radius: 12px;
+      color: var(--text);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .lang-option:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- INITIAL LANG MODAL -->
+  <div class="lang-modal-overlay" id="initialLangModal">
+    <div class="lang-modal">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 24px; display: inline-block;">
+        <rect x="2" y="6" width="6" height="12" rx="1" stroke="var(--accent)" stroke-width="2" />
+        <path d="M5 2V6M5 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+        <rect x="14" y="10" width="6" height="8" rx="1" fill="var(--accent)" />
+        <path d="M17 6V10M17 18V22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <h2>Select your language</h2>
+      <p>Escolha o idioma / Elige tu idioma</p>
+      <div class="lang-options">
+        <button class="lang-option" onclick="chooseInitialLanguage('pt')">
+          <span>Português</span>
+          <span style="font-size: 1.2rem;">🇧🇷</span>
+        </button>
+        <button class="lang-option" onclick="chooseInitialLanguage('es')">
+          <span>Español</span>
+          <span style="font-size: 1.2rem;">🇪🇸</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- NAV -->
   <nav id="nav">
@@ -2020,6 +2122,13 @@
     };
 
     let currentLang = localStorage.getItem('rastro-lang') || 'pt';
+    let hasSelectedLang = !!localStorage.getItem('rastro-lang');
+
+    function chooseInitialLanguage(lang) {
+      document.getElementById('initialLangModal').classList.remove('active');
+      document.body.style.overflow = '';
+      setLanguage(lang);
+    }
 
     function setLanguage(lang) {
       currentLang = lang;
@@ -2060,6 +2169,10 @@
     // Initialize language on load
     window.addEventListener('DOMContentLoaded', () => {
       setLanguage(currentLang);
+      if (!hasSelectedLang) {
+        document.body.style.overflow = 'hidden';
+        document.getElementById('initialLangModal').classList.add('active');
+      }
     });
     // Force scroll to top on reload
     if ('scrollRestoration' in history) {
