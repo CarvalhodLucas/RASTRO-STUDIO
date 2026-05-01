@@ -1194,6 +1194,17 @@
         padding: 48px 32px;
       }
 
+      .cta-actions {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .cta-actions .btn-primary,
+      .cta-actions .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
       footer {
         flex-direction: column;
         gap: 16px;
@@ -1234,13 +1245,14 @@
       opacity: 0;
       transform: translateY(20px) scale(0.95);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      pointer-events: all;
+      pointer-events: none;
       margin-bottom: 20px;
     }
 
     .chatbox-window.active {
       opacity: 1;
       transform: translateY(0) scale(1);
+      pointer-events: all;
     }
 
     .chatbox-header {
@@ -1411,12 +1423,31 @@
       }
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 768px) {
+      .chatbox-container {
+        bottom: 16px;
+        right: 16px;
+        left: 16px;
+      }
+
       .chatbox-window {
-        width: calc(100vw - 40px);
+        width: 100%;
+        max-width: 100%;
+        height: 75vh;
+        margin-bottom: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chatbox-container {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+      }
+
+      .chatbox-window {
         height: 70vh;
-        bottom: 20px;
-        right: 20px;
+        border-radius: 16px;
       }
     }
 
