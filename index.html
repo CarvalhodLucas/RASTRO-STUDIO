@@ -666,12 +666,56 @@
       border-radius: 12px;
       overflow: hidden;
       position: relative;
-      transition: border-color 0.3s, transform 0.3s;
+      transition: border-color 0.3s, transform 0.5s ease, box-shadow 0.3s;
+      transform-style: preserve-3d;
     }
 
     .portfolio-card:hover {
-      border-color: rgba(0, 102, 255, 0.3);
-      transform: translateY(-4px);
+      border-color: #00c8ff;
+      box-shadow: 0 0 20px rgba(0,200,255,0.3), 0 0 60px rgba(0,200,255,0.1);
+      z-index: 10;
+    }
+
+    /* Corner Brackets */
+    .portfolio-card::before {
+       content: '';
+       position: absolute;
+       inset: 16px;
+       pointer-events: none;
+       opacity: 0;
+       transition: opacity 0.3s;
+       z-index: 20;
+       background: 
+         linear-gradient(#00c8ff, #00c8ff) 0 0 / 15px 2px no-repeat,
+         linear-gradient(#00c8ff, #00c8ff) 0 0 / 2px 15px no-repeat,
+         linear-gradient(#00c8ff, #00c8ff) 100% 0 / 15px 2px no-repeat,
+         linear-gradient(#00c8ff, #00c8ff) 100% 0 / 2px 15px no-repeat,
+         linear-gradient(#00c8ff, #00c8ff) 0 100% / 15px 2px no-repeat,
+         linear-gradient(#00c8ff, #00c8ff) 0 100% / 2px 15px no-repeat,
+         linear-gradient(#00c8ff, #00c8ff) 100% 100% / 15px 2px no-repeat,
+         linear-gradient(#00c8ff, #00c8ff) 100% 100% / 2px 15px no-repeat;
+    }
+    .portfolio-card:hover::before {
+       opacity: 1;
+    }
+
+    /* Glitch Flash Entrance */
+    .portfolio-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 200, 255, 0.8);
+      z-index: 30;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .portfolio-card.visible::after, .portfolio-card.active::after {
+      animation: glitchFlash 0.3s ease-out forwards;
+    }
+    @keyframes glitchFlash {
+      0% { opacity: 0; }
+      10% { opacity: 0.8; mix-blend-mode: screen; }
+      100% { opacity: 0; mix-blend-mode: normal; }
     }
 
     .portfolio-card:first-child {
@@ -686,6 +730,26 @@
       justify-content: center;
       position: relative;
       overflow: hidden;
+    }
+
+    /* Scan Line Effect */
+    .portfolio-preview::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(0,200,255,0.15), transparent);
+      pointer-events: none;
+      z-index: 10;
+    }
+    .portfolio-card:hover .portfolio-preview::after {
+      animation: scanline 1.5s linear infinite;
+    }
+    @keyframes scanline {
+      0% { top: -100%; }
+      100% { top: 100%; }
     }
 
     .portfolio-card:first-child .portfolio-preview {
@@ -946,12 +1010,71 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 2px;
       background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(0, 200, 255, 0.15);
+      z-index: 5;
+    }
+
+    .process-steps::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 0;
+      width: 6px;
+      height: 6px;
+      background: #00c8ff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00c8ff, 0 0 20px #00c8ff;
+      z-index: 6;
+      animation: travelLine 4s linear infinite;
+    }
+
+    @keyframes travelLine {
+      0% { left: 0; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: 100%; opacity: 0; }
     }
 
     .process-step {
       background: var(--bg);
       padding: 40px 32px;
       position: relative;
+      transition: background 0.3s ease;
+    }
+
+    .process-step::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 0;
+      background: #00c8ff;
+      transition: height 0.4s ease;
+      z-index: 5;
+    }
+
+    .process-step:hover {
+      background: rgba(0, 200, 255, 0.04);
+    }
+
+    .process-step:hover::before {
+      height: 100%;
+    }
+
+    .process-step:hover .step-num {
+      text-shadow: 0 0 10px rgba(0, 200, 255, 0.8);
     }
 
     .step-num {
@@ -961,6 +1084,7 @@
       letter-spacing: 0.1em;
       color: var(--accent);
       margin-bottom: 20px;
+      transition: text-shadow 0.3s ease;
     }
 
     .step-title {
@@ -969,6 +1093,20 @@
       font-weight: 700;
       margin-bottom: 10px;
       letter-spacing: -0.02em;
+    }
+
+    .terminal-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1.1em;
+      background-color: #00c8ff;
+      vertical-align: text-bottom;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+    }
+    
+    .terminal-cursor.hidden {
+      display: none;
     }
 
     .step-desc {
@@ -1594,17 +1732,111 @@
 
   <!-- HERO -->
   <section class="hero">
+    <style>
+      .hero {
+        position: relative;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        text-align: left;
+        padding: 0 80px !important;
+        margin: 0;
+        overflow: hidden;
+      }
+      @media (max-width: 768px) {
+        .hero {
+          padding: 0 32px !important;
+        }
+      }
+      .hero-video-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 1;
+        pointer-events: none;
+      }
+      .hero-text-gradient {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: linear-gradient(to right, rgba(0,0,0,0.6) 35%, transparent 70%);
+        z-index: 1;
+        pointer-events: none;
+      }
+      .hero > *:not(.hero-video-bg):not(.hero-overlay):not(.hero-text-gradient):not(style) {
+        position: relative;
+        z-index: 2;
+      }
+      .hero-actions {
+        z-index: 10 !important;
+        justify-content: flex-start !important;
+        width: 100%;
+      }
+      #fm-hero-headline {
+        max-width: 900px;
+        color: #fff !important;
+        font-weight: 800 !important;
+        padding-right: 0 !important;
+      }
+      #fm-hero-headline .hero-subline {
+        color: #fff !important;
+        -webkit-text-stroke: 0 !important;
+        opacity: 0.9;
+      }
+      #fm-hero-sub {
+        color: rgba(255, 255, 255, 0.85) !important;
+        margin-left: 0 !important;
+        max-width: 600px;
+      }
+      .hero-metrics {
+        justify-content: flex-start !important;
+      }
+      .btn-primary {
+        background: #00c8ff !important;
+        color: #000 !important;
+        box-shadow: 0 4px 20px rgba(0, 200, 255, 0.3) !important;
+      }
+      .btn-primary:hover {
+        background: #00b0e0 !important;
+        box-shadow: 0 8px 25px rgba(0, 200, 255, 0.5) !important;
+      }
+      #fm-hero-headline, #fm-hero-sub, #fm-hero-buttons, #fm-hero-metrics {
+        animation: none !important;
+        opacity: 0; 
+      }
+    </style>
+    <video class="hero-video-bg" src="hero.mp4" autoplay muted loop playsinline></video>
+    <div class="hero-overlay"></div>
+    <div class="hero-text-gradient"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
-    <h1>
+    <h1 id="fm-hero-headline">
       <span class="hero-topline" data-i18n="hero-topline">Construímos o</span>
       <span class="highlight">futuro moderno</span>
       <em class="hero-subline" data-i18n="hero-subline">da sua empresa</em>
     </h1>
-    <p class="hero-sub" data-i18n="hero-sub">
+    <p class="hero-sub" id="fm-hero-sub" data-i18n="hero-sub">
       Sites modernos, chatbots com IA e automações que trabalham por você — 24 horas por dia, 7 dias por semana.
     </p>
-    <div class="hero-actions" style="position: relative; z-index: 10;">
+    <div class="hero-actions" id="fm-hero-buttons" style="position: relative; z-index: 10;">
       <a href="javascript:void(0)" class="btn-primary" onclick="toggleChat()">
         <span data-i18n="btn-primary">Começar projeto →</span>
       </a>
@@ -1612,7 +1844,7 @@
         <span data-i18n="btn-secondary">Ver portfólio ↓</span>
       </a>
     </div>
-    <div class="hero-metrics">
+    <div class="hero-metrics" id="fm-hero-metrics">
       <div class="metric">
         <div class="metric-num">5<span>+</span></div>
         <div class="metric-label" data-i18n="metric-projects">Projetos entregues</div>
@@ -1626,6 +1858,15 @@
         <div class="metric-label" data-i18n="metric-focus">Foco no resultado</div>
       </div>
     </div>
+
+    <script type="module">
+      import { animate } from "https://esm.sh/framer-motion@11.0.3/dom";
+      
+      animate("#fm-hero-headline", { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: 0.1, ease: "easeOut" });
+      animate("#fm-hero-sub", { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: 0.2, ease: "easeOut" });
+      animate("#fm-hero-buttons", { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: 0.3, ease: "easeOut" });
+      animate("#fm-hero-metrics", { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: 0.4, ease: "easeOut" });
+    </script>
   </section>
 
   <!-- MARQUEE -->
@@ -1650,6 +1891,7 @@
 
   <!-- SERVICES -->
   <section class="section" id="servicos">
+    <canvas class="neural-canvas"></canvas>
     <div class="section-tag" data-i18n="section-tag-services">O que fazemos</div>
     <h2 class="section-title reveal" data-i18n="section-title-services">Tecnologia que <em>trabalha</em> enquanto você
       descansa</h2>
@@ -1715,6 +1957,7 @@
 
   <!-- PORTFOLIO -->
   <section class="section" id="portfolio" style="padding-top:0">
+    <canvas class="neural-canvas"></canvas>
     <div class="section-tag" data-i18n="section-tag-portfolio">Portfólio</div>
     <h2 class="section-title reveal" data-i18n="section-title-portfolio">Projetos <em>reais</em>, resultados reais</h2>
     <div class="portfolio-grid">
@@ -1896,6 +2139,7 @@
 
   <!-- PROCESS -->
   <section class="section" id="processo">
+    <canvas class="neural-canvas"></canvas>
     <div class="section-tag" data-i18n="section-tag-process">Como trabalhamos</div>
     <h2 class="section-title reveal" data-i18n="section-title-process">Do briefing ao <em>deploy</em> em dias</h2>
     <div class="process-steps">
@@ -1928,6 +2172,7 @@
 
   <!-- CTA -->
   <div class="cta-section reveal">
+    <canvas class="neural-canvas"></canvas>
     <h2 data-i18n="cta-title">Pronto para começar?</h2>
     <p data-i18n="cta-desc">Fale agora e receba uma proposta em até 24 horas.</p>
     <div class="cta-actions">
@@ -2389,7 +2634,7 @@ Siga estas diretrizes:
    - E-mail.
    - WhatsApp.
 6. Quando receber estas informações (Nome, E-mail e WhatsApp), gere um breve resumo do que foi discutido e diga que o Lucas entrará em contato em breve. Adicione obrigatoriamente o código [L-DONE] ao final desta mensagem para que o sistema processe o envio.
-7. REGRA DE OURO: JAMAIS finalize a conversa ou use o código [L-DONE] se o cliente não tiver fornecido os TRÊS dados obrigatórios: Nome, E-mail e WhatsApp. Se faltar qualquer um deles, peça-o educadamente antes de fazer o resumo final.
+7. REGRA DE OURO: JAMAIS finalize a conversa ou use o código [L-DONE] se o cliente não tiver fornecido os TRÊS dados obrigatórios: Nome, E-mail e WhatsApp. Peça-os educadamente se faltar algum.
 
 Mantenha o tom de voz inovador e premium.`
       });
@@ -2407,7 +2652,7 @@ Mantenha o tom de voz inovador e premium.`
         .map(m => `${m.role === 'assistant' ? 'IA' : 'Cliente'}: ${m.content}`)
         .join('\n');
 
-      const lastBotMsg = chatHistory.filter(m => m.role === 'assistant').slice(-1)[0]?.content || "";
+      const lastBotMsg = (chatHistory.filter(m => m.role === 'assistant').slice(-1)[0]?.content || "").replace('[L-DONE]', '').trim();
       const shortSummary = `📌 *RESUMO DO PROJETO*\n\n${lastBotMsg}`;
 
       // Envia notificações via API serverless (seguro)
@@ -2496,6 +2741,206 @@ Mantenha o tom de voz inovador e premium.`
     function handleChatKey(e) {
       if (e.key === 'Enter') sendChatMessage();
     }
+  </script>
+
+  <style>
+    .neural-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    #servicos, #portfolio, #processo, .cta-section {
+      position: relative;
+      overflow: hidden;
+    }
+    #servicos > *:not(.neural-canvas),
+    #portfolio > *:not(.neural-canvas),
+    #processo > *:not(.neural-canvas),
+    .cta-section > *:not(.neural-canvas) {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+
+  <script>
+    class NeuralNetwork {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.nodes = [];
+        this.maxNodes = 60;
+        this.connectionDistance = 150;
+        this.colors = ['#00c8ff', '#a855f7'];
+        
+        this.resize();
+        this.init();
+        
+        window.addEventListener('resize', () => {
+          this.resize();
+          this.init();
+        });
+        
+        this.animate = this.animate.bind(this);
+        requestAnimationFrame(this.animate);
+      }
+      
+      resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+      }
+      
+      init() {
+        this.nodes = [];
+        const numNodes = Math.min(this.maxNodes, Math.floor((this.canvas.width * this.canvas.height) / 15000));
+        
+        for (let i = 0; i < numNodes; i++) {
+          this.nodes.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * 1.0,
+            vy: (Math.random() - 0.5) * 1.0,
+            radius: Math.random() * 2 + 2,
+            color: this.colors[Math.floor(Math.random() * this.colors.length)]
+          });
+        }
+      }
+      
+      animate() {
+        if (!this.runningLogged) {
+          console.log("canvas running");
+          this.runningLogged = true;
+        }
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        for (let i = 0; i < this.nodes.length; i++) {
+          const node = this.nodes[i];
+          
+          node.x += node.vx;
+          node.y += node.vy;
+          
+          if (node.x < 0 || node.x > this.canvas.width) node.vx *= -1;
+          if (node.y < 0 || node.y > this.canvas.height) node.vy *= -1;
+          
+          this.ctx.beginPath();
+          this.ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+          this.ctx.globalAlpha = 0.6;
+          this.ctx.fillStyle = node.color;
+          this.ctx.fill();
+          this.ctx.globalAlpha = 1.0;
+          
+          for (let j = i + 1; j < this.nodes.length; j++) {
+            const other = this.nodes[j];
+            const dx = node.x - other.x;
+            const dy = node.y - other.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < this.connectionDistance) {
+              this.ctx.beginPath();
+              this.ctx.moveTo(node.x, node.y);
+              this.ctx.lineTo(other.x, other.y);
+              const alpha = (1 - (dist / this.connectionDistance)) * 0.3;
+              
+              this.ctx.strokeStyle = `rgba(0, 200, 255, ${alpha})`;
+              this.ctx.lineWidth = 0.8;
+              this.ctx.stroke();
+            }
+          }
+        }
+        
+        requestAnimationFrame(this.animate);
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const canvases = document.querySelectorAll('.neural-canvas');
+      canvases.forEach(canvas => new NeuralNetwork(canvas));
+      
+      // 3D Tilt Effect for Portfolio Cards
+      const cards = document.querySelectorAll('.portfolio-card');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          
+          const rotateX = ((y - centerY) / centerY) * -8;
+          const rotateY = ((x - centerX) / centerX) * 8;
+          
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+          card.style.transition = 'none';
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)`;
+          card.style.transition = 'transform 0.5s ease, border-color 0.3s, box-shadow 0.3s';
+        });
+        
+        card.addEventListener('mouseenter', () => {
+          card.style.transition = 'transform 0.1s ease';
+        });
+      });
+      
+      // Process Section Effects
+      const processSection = document.getElementById('processo');
+      const processSteps = document.querySelectorAll('.process-step');
+      
+      const processObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            processSteps.forEach((step, index) => {
+              setTimeout(() => {
+                // Counter Animation
+                const numEl = step.querySelector('.step-num');
+                const targetText = numEl.textContent;
+                const targetMatch = targetText.match(/^(\d+)/);
+                if (targetMatch) {
+                  const targetNum = parseInt(targetMatch[1], 10);
+                  const suffix = targetText.substring(targetMatch[0].length);
+                  let currentNum = 0;
+                  const interval = setInterval(() => {
+                    currentNum++;
+                    numEl.textContent = (currentNum < 10 ? '0' : '') + currentNum + suffix;
+                    if (currentNum >= targetNum) clearInterval(interval);
+                  }, Math.max(20, 600 / targetNum));
+                }
+
+                // Terminal Typing Effect
+                const titleEl = step.querySelector('.step-title');
+                const fullText = titleEl.textContent;
+                titleEl.textContent = '';
+                titleEl.innerHTML = '<span class="typed-text"></span><span class="terminal-cursor"></span>';
+                const typedSpan = titleEl.querySelector('.typed-text');
+                const cursor = titleEl.querySelector('.terminal-cursor');
+                
+                let charIndex = 0;
+                const typeInterval = setInterval(() => {
+                  typedSpan.textContent += fullText[charIndex];
+                  charIndex++;
+                  if (charIndex >= fullText.length) {
+                    clearInterval(typeInterval);
+                    setTimeout(() => cursor.classList.add('hidden'), 1000);
+                  }
+                }, 40);
+                
+              }, index * 150);
+            });
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      
+      if (processSection) {
+        processObserver.observe(processSection);
+      }
+    });
   </script>
 </body>
 
