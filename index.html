@@ -1324,7 +1324,12 @@
       }
 
       .process-steps {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+      }
+
+      .process-steps::before,
+      .process-steps::after {
+        display: none !important;
       }
 
       .cta-section {
