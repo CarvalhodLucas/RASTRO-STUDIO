@@ -1825,7 +1825,8 @@
       }
       #fm-hero-headline, #fm-hero-sub, #fm-hero-buttons, #fm-hero-metrics {
         animation: none !important;
-        opacity: 0; 
+        position: relative;
+        z-index: 10;
       }
     </style>
     <video class="hero-video-bg" src="hero.mp4" autoplay muted loop playsinline></video>
@@ -1867,6 +1868,7 @@
     <script type="module">
       import { animate } from "https://esm.sh/framer-motion@11.0.3/dom";
       
+      // Animate from initial state to final state
       animate("#fm-hero-headline", { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: 0.1, ease: "easeOut" });
       animate("#fm-hero-sub", { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: 0.2, ease: "easeOut" });
       animate("#fm-hero-buttons", { opacity: [0, 1], y: [30, 0] }, { duration: 0.8, delay: 0.3, ease: "easeOut" });
