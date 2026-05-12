@@ -2801,6 +2801,26 @@ Mantenha o tom de voz inovador e premium.`
 
   <script>
 (function(){
+  // Remove Spline Logo (Aggressive & Global)
+  const hideLogo = () => {
+    const spline = document.querySelector('spline-viewer');
+    if (spline && spline.shadowRoot) {
+      const sr = spline.shadowRoot;
+      ['#logo', '#anchor'].forEach(sel => {
+        const el = sr.querySelector(sel);
+        if (el) el.style.display = 'none';
+      });
+      if (!sr.querySelector('#spline-hide-style')) {
+        const style = document.createElement('style');
+        style.id = 'spline-hide-style';
+        style.textContent = '#logo, #anchor, [class*="logo"], [id*="logo"], a[href*="spline"] { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
+        sr.appendChild(style);
+      }
+    }
+  };
+  const logoInterval = setInterval(hideLogo, 10);
+  setTimeout(() => clearInterval(logoInterval), 10000);
+
   const projects = [
     { name:'CRM WhatsApp', cat:'AUTOMAÇÃO • IA', url:'carvalhodlucas.github.io/CRM-WhatsApp', src:'https://carvalhodlucas.github.io/CRM-WhatsApp/', link:'https://carvalhodlucas.github.io/CRM-WhatsApp/' },
     { name:'Rastro', cat:'FINTECH • DASHBOARD', url:'www.rastroia.com', src:'rastroia.png', link:'https://www.rastroia.com/', isStatic: true },
@@ -2978,28 +2998,6 @@ Mantenha o tom de voz inovador e premium.`
       renderer.setSize(container.clientWidth, container.clientHeight);
       cssRenderer.setSize(container.clientWidth, container.clientHeight);
     });
-
-    // Remove Spline Logo (Aggressive)
-    const hideLogo = () => {
-      const spline = document.querySelector('spline-viewer');
-      if (spline && spline.shadowRoot) {
-        const sr = spline.shadowRoot;
-        // Hide known elements
-        ['#logo', '#anchor'].forEach(sel => {
-          const el = sr.querySelector(sel);
-          if (el) el.style.display = 'none';
-        });
-        // Inject CSS into shadow root to cover all cases
-        if (!sr.querySelector('#spline-hide-style')) {
-          const style = document.createElement('style');
-          style.id = 'spline-hide-style';
-          style.textContent = '#logo, #anchor, [class*="logo"], [id*="logo"], a[href*="spline"] { display: none !important; opacity: 0 !important; pointer-events: none !important; }';
-          sr.appendChild(style);
-        }
-      }
-    };
-    const logoInterval = setInterval(hideLogo, 10);
-    setTimeout(() => clearInterval(logoInterval), 8000); // Stop after 8s
   }
 
   if (document.readyState === 'loading') {
