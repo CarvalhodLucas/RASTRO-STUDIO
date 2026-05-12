@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -2803,7 +2803,7 @@ Mantenha o tom de voz inovador e premium.`
 (function(){
   const projects = [
     { name:'CRM WhatsApp', cat:'AUTOMAÇÃO • IA', url:'carvalhodlucas.github.io/CRM-WhatsApp', src:'https://carvalhodlucas.github.io/CRM-WhatsApp/', link:'https://carvalhodlucas.github.io/CRM-WhatsApp/' },
-    { name:'Rastro', cat:'FINTECH • DASHBOARD', url:'www.rastroia.com', src:'https://www.rastroia.com/', link:'https://www.rastroia.com/' },
+    { name:'Rastro', cat:'FINTECH • DASHBOARD', url:'www.rastroia.com', src:'rastroia.png', link:'https://www.rastroia.com/', isStatic: true },
     { name:'Rastro Imóveis', cat:'IMÓVEIS • CHATBOT', url:'carvalhodlucas.github.io/rastroimoveis', src:'https://carvalhodlucas.github.io/rastroimoveis/', link:'https://carvalhodlucas.github.io/rastroimoveis/' },
     { name:'Horizonte', cat:'LANDING PAGE • DESIGN', url:'carvalhodlucas.github.io/Horizonte', src:'https://carvalhodlucas.github.io/Horizonte/', link:'https://carvalhodlucas.github.io/Horizonte/' },
     { name:'BiciRastro', cat:'E-COMMERCE • REACT', url:'carvalhodlucas.github.io/bicirastro', src:'https://carvalhodlucas.github.io/bicirastro/', link:'https://carvalhodlucas.github.io/bicirastro/' },
@@ -2811,6 +2811,10 @@ Mantenha o tom de voz inovador e premium.`
   ];
 
   function makeCardHTML(proj) {
+    const previewHTML = proj.isStatic 
+      ? `<img src="${proj.src}" style="width:100%;height:100%;object-fit:cover;pointer-events:none;">`
+      : `<iframe src="${proj.src}" loading="lazy" scrolling="no" style="width:200%;height:200%;transform:scale(0.5);transform-origin:top left;pointer-events:none;border:none;"></iframe>`;
+
     return `
       <div style="background:#0d1117;padding:8px 10px;display:flex;align-items:center;gap:6px;">
         <div style="width:8px;height:8px;border-radius:50%;background:#ff5f57"></div>
@@ -2819,7 +2823,7 @@ Mantenha o tom de voz inovador e premium.`
         <div style="flex:1;background:#161b22;border-radius:4px;padding:2px 8px;font-size:9px;color:rgba(255,255,255,0.4);text-align:center;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${proj.url}</div>
       </div>
       <div style="width:100%;height:160px;overflow:hidden;background:#0a0f1e;position:relative;">
-        <iframe src="${proj.src}" loading="lazy" scrolling="no" style="width:200%;height:200%;transform:scale(0.5);transform-origin:top left;pointer-events:none;border:none;"></iframe>
+        ${previewHTML}
       </div>
       <div style="padding:12px 14px;">
         <div style="font-family:'Orbitron',monospace;font-size:0.6rem;color:#00c8ff;letter-spacing:0.1em;margin-bottom:4px;">${proj.cat}</div>
@@ -2974,6 +2978,17 @@ Mantenha o tom de voz inovador e premium.`
       renderer.setSize(container.clientWidth, container.clientHeight);
       cssRenderer.setSize(container.clientWidth, container.clientHeight);
     });
+
+    // Remove Spline Logo (Aggressive)
+    const hideLogo = () => {
+      const spline = document.querySelector('spline-viewer');
+      if (spline && spline.shadowRoot) {
+        const logo = spline.shadowRoot.querySelector('#logo') || spline.shadowRoot.querySelector('#anchor');
+        if (logo) logo.style.display = 'none';
+      }
+    };
+    const logoInterval = setInterval(hideLogo, 10);
+    setTimeout(() => clearInterval(logoInterval), 5000); // Stop after 5s
   }
 
   if (document.readyState === 'loading') {
