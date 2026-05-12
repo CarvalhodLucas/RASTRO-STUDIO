@@ -1,0 +1,649 @@
+<!-- ============================================================
+     RASTRO STUDIO — 3D Neural Network Portfolio Section
+     Standalone snippet — paste inside <body> of index.html
+     Required CDN scripts (add to <head> or before </body>):
+     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+============================================================ -->
+
+<style>
+/* ── Portfolio Neural Section ────────────────────────────── */
+#portfolio {
+  position: relative;
+  height: 600vh;
+  background: #020408;
+}
+
+#pf-sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Three.js canvas */
+#pf-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* CSS2DRenderer overlay */
+#pf-label-renderer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ── Section header (fades out on scroll) ── */
+#pf-header {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+#pf-header .pf-label-tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #00c8ff;
+  margin-bottom: 10px;
+  font-family: 'Orbitron', sans-serif;
+}
+#pf-header h2 {
+  font-family: 'Syne', 'Orbitron', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  color: #f0f2f7;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+#pf-header h2 em {
+  font-style: normal;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(0,200,255,0.4);
+}
+
+/* ── Progress indicator (left side) ── */
+#pf-progress {
+  position: absolute;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+.pf-prog-line {
+  width: 1px;
+  flex: 1;
+  min-height: 32px;
+  background: rgba(0,200,255,0.2);
+  margin-left: 5px;
+}
+.pf-prog-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+.pf-prog-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,200,255,0.35);
+  background: transparent;
+  transition: all 0.4s ease;
+  flex-shrink: 0;
+}
+.pf-prog-dot.active {
+  background: #00c8ff;
+  border-color: #00c8ff;
+  box-shadow: 0 0 10px #00c8ff, 0 0 20px rgba(0,200,255,0.4);
+}
+.pf-prog-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.58rem;
+  color: rgba(0,200,255,0.4);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transition: color 0.4s ease;
+}
+.pf-prog-item.active .pf-prog-name {
+  color: #00c8ff;
+}
+
+/* ── Project Cards (right side overlay) ── */
+#pf-cards-container {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 380px;
+  z-index: 20;
+  pointer-events: none;
+}
+.pf-card {
+  position: absolute;
+  inset: 0;
+  background: rgba(2,4,8,0.88);
+  border: 1px solid rgba(0,200,255,0.25);
+  border-radius: 16px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 32px;
+  opacity: 0;
+  transform: translateX(20px) scale(0.97);
+  transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1),
+              transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+}
+.pf-card.visible {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+}
+.pf-card-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.65rem;
+  color: rgba(0,200,255,0.5);
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+.pf-card-title {
+  font-family: 'Syne', 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f0f2f7;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+.pf-card-sub {
+  font-size: 0.85rem;
+  color: #00c8ff;
+  font-family: 'DM Sans', sans-serif;
+  margin-bottom: 20px;
+  opacity: 0.85;
+}
+.pf-card-desc {
+  font-size: 0.88rem;
+  color: rgba(240,242,247,0.65);
+  line-height: 1.65;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+}
+.pf-card-tags {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pf-card-tag {
+  font-size: 0.68rem;
+  padding: 4px 10px;
+  border: 1px solid rgba(0,200,255,0.2);
+  border-radius: 100px;
+  color: rgba(0,200,255,0.7);
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 0.04em;
+}
+.pf-card-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(0,200,255,0.12);
+  margin: 20px 0;
+}
+.pf-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #00c8ff;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: gap 0.2s ease;
+}
+.pf-card-cta:hover { gap: 12px; }
+.pf-card-glow {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 40px;
+  background: radial-gradient(ellipse, rgba(0,200,255,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Node 3D labels (CSS2DRenderer) ── */
+.pf-node-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.68rem;
+  color: #00c8ff;
+  background: rgba(0,0,0,0.6);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,200,255,0.25);
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 0 8px rgba(0,200,255,0.8);
+}
+
+/* ── Scroll hint ── */
+#pf-scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 20;
+  pointer-events: none;
+  animation: pfHintFade 2s ease-in-out infinite;
+}
+#pf-scroll-hint span {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.6rem;
+  color: rgba(0,200,255,0.5);
+  letter-spacing: 0.1em;
+}
+#pf-scroll-hint svg {
+  opacity: 0.4;
+}
+@keyframes pfHintFade {
+  0%,100% { opacity:1; transform: translateX(-50%) translateY(0); }
+  50% { opacity:0.4; transform: translateX(-50%) translateY(6px); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  #pf-cards-container { right: 16px; left: 16px; width: auto; }
+  #pf-progress { display: none; }
+  #pf-header { width: 90%; }
+}
+</style>
+
+<!-- ── HTML Structure ───────────────────────────────────── -->
+<section id="portfolio">
+  <div id="pf-sticky">
+
+    <!-- Three.js canvas -->
+    <canvas id="pf-canvas"></canvas>
+
+    <!-- CSS2DRenderer target -->
+    <div id="pf-label-renderer"></div>
+
+    <!-- Section header -->
+    <div id="pf-header">
+      <p class="pf-label-tag">// Projetos</p>
+      <h2>Navegue pela <em>rede neural</em><br>dos nossos trabalhos</h2>
+    </div>
+
+    <!-- Progress dots -->
+    <nav id="pf-progress" aria-label="Progresso de projetos"></nav>
+
+    <!-- Project cards -->
+    <div id="pf-cards-container">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <!-- Scroll hint -->
+    <div id="pf-scroll-hint">
+      <span>SCROLL PARA EXPLORAR</span>
+      <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+        <rect x="1" y="1" width="14" height="22" rx="7" stroke="#00c8ff" stroke-width="1.5"/>
+        <circle cx="8" cy="8" r="2.5" fill="#00c8ff">
+          <animate attributeName="cy" values="8;14;8" dur="1.8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="1;0.2;1" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+  </div>
+</section>
+
+<script>
+(function() {
+'use strict';
+
+/* ── Data ──────────────────────────────────────────────── */
+const PROJECTS = [
+  {
+    num: '01', title: 'Rastro Studio',
+    sub: 'Plataforma de inteligência de mercado',
+    desc: 'Análise avançada de dados com IA para tomada de decisões estratégicas. Dashboards em tempo real, relatórios automatizados e insights preditivos.',
+    tags: ['IA', 'Dashboard', 'SaaS', 'Data'],
+  },
+  {
+    num: '02', title: 'PataLux',
+    sub: 'Landing page premium para pet shop',
+    desc: 'Experiência visual luxuosa para pet shop de alto padrão. Design glassmorphism, animações fluidas e conversão otimizada.',
+    tags: ['Landing Page', 'Premium', 'E-commerce'],
+  },
+  {
+    num: '03', title: 'Cliente Restaurante',
+    sub: 'Site com reservas online',
+    desc: 'Plataforma gastronômica com sistema de reservas em tempo real, cardápio digital interativo e integração com WhatsApp.',
+    tags: ['Reservas', 'WhatsApp', 'UI/UX'],
+  },
+  {
+    num: '04', title: 'Cliente Clínica',
+    sub: 'Agendamento médico automatizado',
+    desc: 'Sistema completo de agendamento com confirmação automática via WhatsApp, prontuário digital e gestão de pacientes.',
+    tags: ['Saúde', 'Automação', 'WhatsApp'],
+  },
+  {
+    num: '05', title: 'Chatbot WhatsApp',
+    sub: 'Automação para imobiliária',
+    desc: 'Assistente virtual inteligente que qualifica leads, agenda visitas e responde dúvidas 24/7 com IA generativa.',
+    tags: ['Chatbot', 'IA', 'Imobiliária'],
+  },
+  {
+    num: '06', title: 'Em breve',
+    sub: 'Próximo projeto',
+    desc: 'Um novo projeto está sendo desenvolvido. Algo grande está chegando — fique atento às novidades.',
+    tags: ['Em construção', '2025'],
+  },
+];
+
+const NODE_POSITIONS = [
+  [0,  0,   0],
+  [3,  1,  -8],
+  [-2, -1, -16],
+  [2,  2,  -24],
+  [-1, -2, -32],
+  [0,  0,  -40],
+];
+
+/* ── Wait for Three.js ─────────────────────────────────── */
+function waitFor(check, cb, interval) {
+  if (check()) { cb(); return; }
+  setTimeout(() => waitFor(check, cb, interval), interval || 100);
+}
+
+waitFor(
+  () => typeof THREE !== 'undefined' &&
+        typeof THREE.CSS2DRenderer !== 'undefined' &&
+        typeof gsap !== 'undefined' &&
+        typeof ScrollTrigger !== 'undefined',
+  initPortfolio
+);
+
+function initPortfolio() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ── Scene ── */
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x020408, 0.018);
+
+  /* ── Camera ── */
+  const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 8);
+
+  /* ── WebGL Renderer ── */
+  const canvas = document.getElementById('pf-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x020408, 1);
+
+  /* ── CSS2D Renderer ── */
+  const labelRenderer = new THREE.CSS2DRenderer();
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.domElement.id = 'pf-label-renderer';
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0';
+  labelRenderer.domElement.style.pointerEvents = 'none';
+  const sticky = document.getElementById('pf-sticky');
+  const oldLR = document.getElementById('pf-label-renderer');
+  if (oldLR) oldLR.remove();
+  sticky.appendChild(labelRenderer.domElement);
+
+  /* ── Lighting ── */
+  scene.add(new THREE.AmbientLight(0x0a1020, 2));
+  const ptLight = new THREE.PointLight(0x00c8ff, 3, 40);
+  scene.add(ptLight);
+  const ptLight2 = new THREE.PointLight(0xa855f7, 2, 30);
+  ptLight2.position.set(-5, 5, -20);
+  scene.add(ptLight2);
+
+  /* ── Camera Path ── */
+  const pathPoints = [
+    new THREE.Vector3(0, 0, 12),
+    ...NODE_POSITIONS.map(p => new THREE.Vector3(...p)),
+    new THREE.Vector3(0, 0, -48),
+  ];
+  const cameraPath = new THREE.CatmullRomCurve3(pathPoints, false, 'catmullrom', 0.5);
+
+  /* ── Main Nodes ── */
+  const mainNodes = [];
+  const nodeGeom = new THREE.SphereGeometry(0.8, 32, 32);
+
+  NODE_POSITIONS.forEach((pos, i) => {
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0x00c8ff,
+      emissive: 0x003a4f,
+      emissiveIntensity: 0.6,
+      roughness: 0.2,
+      metalness: 0.8,
+    });
+    const mesh = new THREE.Mesh(nodeGeom, mat);
+    mesh.position.set(...pos);
+    scene.add(mesh);
+
+    // Glow halo
+    const haloGeom = new THREE.SphereGeometry(1.1, 16, 16);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: 0x00c8ff, transparent: true, opacity: 0.06, side: THREE.BackSide,
+    });
+    const halo = new THREE.Mesh(haloGeom, haloMat);
+    mesh.add(halo);
+
+    // CSS2D Label
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'pf-node-label';
+    labelDiv.textContent = PROJECTS[i].title;
+    const label = new THREE.CSS2DObject(labelDiv);
+    label.position.set(0, 1.4, 0);
+    mesh.add(label);
+
+    mainNodes.push({ mesh, mat, haloMat, pos: new THREE.Vector3(...pos), label: labelDiv });
+  });
+
+  /* ── Small Decorative Nodes ── */
+  const smallGeom = new THREE.SphereGeometry(0.2, 12, 12);
+  const smallMat = new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.5 });
+  const rng = (a, b) => a + Math.random() * (b - a);
+  for (let i = 0; i < 20; i++) {
+    const m = new THREE.Mesh(smallGeom, smallMat);
+    m.position.set(rng(-8,8), rng(-5,5), rng(-45,5));
+    scene.add(m);
+  }
+
+  /* ── Connections ── */
+  const lineMat = new THREE.LineBasicMaterial({ color: 0x00c8ff, transparent: true, opacity: 0.18 });
+  const allPositions = [...NODE_POSITIONS, ...Array.from({length:8}, () => [rng(-6,6),rng(-4,4),rng(-42,2)])];
+  allPositions.forEach((pA, i) => {
+    allPositions.forEach((pB, j) => {
+      if (j <= i) return;
+      const dist = Math.hypot(pA[0]-pB[0], pA[1]-pB[1], pA[2]-pB[2]);
+      if (dist < 12) {
+        const points = [new THREE.Vector3(...pA), new THREE.Vector3(...pB)];
+        const geo = new THREE.BufferGeometry().setFromPoints(points);
+        scene.add(new THREE.Line(geo, lineMat));
+      }
+    });
+  });
+
+  /* ── Floating Particles ── */
+  const particleCount = 200;
+  const pPositions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    pPositions[i*3]   = rng(-12, 12);
+    pPositions[i*3+1] = rng(-8, 8);
+    pPositions[i*3+2] = rng(-50, 8);
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+  const pMat = new THREE.PointsMaterial({ color: 0x004466, size: 0.06, transparent: true, opacity: 0.7 });
+  scene.add(new THREE.Points(pGeo, pMat));
+
+  /* ── Build Progress UI ── */
+  const progressNav = document.getElementById('pf-progress');
+  progressNav.innerHTML = '';
+  PROJECTS.forEach((p, i) => {
+    if (i > 0) {
+      const line = document.createElement('div');
+      line.className = 'pf-prog-line';
+      progressNav.appendChild(line);
+    }
+    const item = document.createElement('div');
+    item.className = 'pf-prog-item';
+    item.id = `pf-prog-${i}`;
+    item.innerHTML = `<div class="pf-prog-dot" id="pf-dot-${i}"></div><span class="pf-prog-name">${p.num} ${p.title}</span>`;
+    progressNav.appendChild(item);
+  });
+
+  /* ── Build Cards ── */
+  const cardsContainer = document.getElementById('pf-cards-container');
+  cardsContainer.innerHTML = '';
+  PROJECTS.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'pf-card';
+    card.id = `pf-card-${i}`;
+    card.innerHTML = `
+      <div class="pf-card-num">// ${p.num}</div>
+      <div class="pf-card-title">${p.title}</div>
+      <div class="pf-card-sub">${p.sub}</div>
+      <div class="pf-card-divider"></div>
+      <div class="pf-card-desc">${p.desc}</div>
+      <div class="pf-card-tags">${p.tags.map(t=>`<span class="pf-card-tag">${t}</span>`).join('')}</div>
+      <div class="pf-card-divider"></div>
+      <span class="pf-card-cta">Ver projeto <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      <div class="pf-card-glow"></div>
+    `;
+    cardsContainer.appendChild(card);
+  });
+
+  /* ── State ── */
+  let currentNode = -1;
+  let scrollProgress = 0;
+  const clock = new THREE.Clock();
+
+  /* ── Activate Node ── */
+  function activateNode(idx) {
+    if (idx === currentNode) return;
+
+    // Deactivate previous
+    if (currentNode >= 0) {
+      document.getElementById(`pf-card-${currentNode}`)?.classList.remove('visible');
+      document.getElementById(`pf-dot-${currentNode}`)?.classList.remove('active');
+      document.getElementById(`pf-prog-${currentNode}`)?.classList.remove('active');
+      const prev = mainNodes[currentNode];
+      if (prev) { prev.mat.emissiveIntensity = 0.6; prev.haloMat.opacity = 0.06; }
+    }
+
+    currentNode = idx;
+
+    if (idx >= 0) {
+      document.getElementById(`pf-card-${idx}`)?.classList.add('visible');
+      document.getElementById(`pf-dot-${idx}`)?.classList.add('active');
+      document.getElementById(`pf-prog-${idx}`)?.classList.add('active');
+      const node = mainNodes[idx];
+      if (node) { node.mat.emissiveIntensity = 2.2; node.haloMat.opacity = 0.18; }
+      // Hide scroll hint after first node
+      if (idx === 0) {
+        const hint = document.getElementById('pf-scroll-hint');
+        if (hint) hint.style.opacity = '0';
+      }
+    }
+
+    // Update header opacity
+    const header = document.getElementById('pf-header');
+    if (header) header.style.opacity = idx >= 0 ? '0' : '1';
+  }
+
+  /* ── GSAP ScrollTrigger ── */
+  ScrollTrigger.create({
+    trigger: '#portfolio',
+    start: 'top top',
+    end: 'bottom bottom',
+    pin: '#pf-sticky',
+    scrub: true,
+    onUpdate(self) {
+      scrollProgress = self.progress;
+    },
+  });
+
+  /* ── Resize ── */
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  /* ── Animate ── */
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    // Camera along path
+    const clampedP = Math.max(0, Math.min(1, scrollProgress));
+    const camPos = cameraPath.getPointAt(clampedP);
+    const lookAhead = Math.min(1, clampedP + 0.02);
+    const lookTarget = cameraPath.getPointAt(lookAhead);
+
+    camera.position.copy(camPos);
+    camera.position.x += Math.sin(t * 0.5) * 0.025;
+    camera.position.y += Math.cos(t * 0.4) * 0.012;
+    camera.lookAt(lookTarget);
+
+    // Move point light with camera
+    ptLight.position.copy(camPos);
+
+    // Pulse nodes
+    mainNodes.forEach((node, i) => {
+      const scale = 0.95 + Math.sin(t * 1.2 + i * 1.1) * 0.055;
+      node.mesh.scale.setScalar(scale);
+
+      // Check activation distance
+      const dist = camera.position.distanceTo(node.pos);
+      if (dist < 2.8 && currentNode !== i) {
+        activateNode(i);
+      }
+    });
+
+    // Deactivate if camera drifts away from all nodes
+    if (currentNode >= 0) {
+      const d = camera.position.distanceTo(mainNodes[currentNode].pos);
+      if (d > 4.5) activateNode(-1);
+    }
+
+    renderer.render(scene, camera);
+    labelRenderer.render(scene, camera);
+  }
+  animate();
+}
+
+})();
+</script>

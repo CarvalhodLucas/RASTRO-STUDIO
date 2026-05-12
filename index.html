@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -7,8 +7,13 @@
   <title>Rastro Studio — Soluções com IA</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Orbitron:wght@400;700;900&display=swap"
     rel="stylesheet" />
+  <!-- Spline Viewer -->
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.92/build/spline-viewer.js"></script>
+  <!-- Three.js for 3D Portfolio -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/renderers/CSS2DRenderer.js"></script>
   <style>
     *,
     *::before,
@@ -1963,209 +1968,21 @@
   </section>
 
   <!-- PORTFOLIO -->
-  <section class="section" id="portfolio" style="padding-top:0">
-    <canvas class="neural-canvas"></canvas>
-    <div class="section-tag" data-i18n="section-tag-portfolio">Portfólio</div>
-    <h2 class="section-title reveal" data-i18n="section-title-portfolio">Projetos <em>reais</em>, resultados reais</h2>
-    <div class="portfolio-grid">
-
-      <div class="portfolio-card reveal">
-        <div class="portfolio-preview">
-          <div class="portfolio-preview-inner real-window">
-            <div class="mock-nav">
-              <div class="mock-dot" style="background:#ff5f57"></div>
-              <div class="mock-dot" style="background:#febc2e"></div>
-              <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar"
-                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
-                rastro-sooty.vercel.app</div>
-            </div>
-            <div class="site-iframe-container">
-              <iframe src="https://rastro-sooty.vercel.app/" class="site-iframe" scrolling="no"></iframe>
-              <div class="iframe-overlay"></div>
-            </div>
-          </div>
-        </div>
-        <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-1-label">Plataforma Web • IA • Mercado Financeiro</div>
-          <div class="portfolio-name" data-i18n="portfolio-1-name">Rastro — Inteligência de Mercado</div>
-          <p class="portfolio-desc" data-i18n="portfolio-1-desc">Plataforma completa de análise fundamentalista com IA
-            para B3, S&P 500 e
-            Criptomoedas. Relatórios 360º, heatmaps, análise de sentimento por agentes de IA e portfólio personalizado.
-          </p>
-          <a href="https://rastro-sooty.vercel.app" class="portfolio-link" target="_blank"
-            data-i18n="portfolio-1-link">Ver projeto →</a>
-        </div>
-      </div>
-
-      <div class="portfolio-card reveal">
-        <div class="portfolio-preview">
-          <div class="portfolio-preview-inner real-window">
-            <div class="mock-nav">
-              <div class="mock-dot" style="background:#ff5f57"></div>
-              <div class="mock-dot" style="background:#febc2e"></div>
-              <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar"
-                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
-                carvalhodlucas.github.io/Horizonte</div>
-            </div>
-            <div class="site-iframe-container">
-              <iframe src="https://carvalhodlucas.github.io/Horizonte/" class="site-iframe" scrolling="no"></iframe>
-              <div class="iframe-overlay"></div>
-            </div>
-          </div>
-        </div>
-        <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-2-label">Gestão de Patrimônio • Landing Page • Finanças
-          </div>
-          <div class="portfolio-name" data-i18n="portfolio-2-name">Horizonte Capital</div>
-          <p class="portfolio-desc" data-i18n="portfolio-2-desc">Landing page premium para gestão de patrimônio e
-            investimentos. Foco em design limpo, confiança e conversão de clientes de alto padrão.</p>
-          <a href="https://carvalhodlucas.github.io/Horizonte/" class="portfolio-link" target="_blank"
-            data-i18n="portfolio-2-link">Ver projeto →</a>
-        </div>
-      </div>
-
-      <div class="portfolio-card reveal">
-        <div class="portfolio-preview">
-          <div class="portfolio-preview-inner real-window">
-            <div class="mock-nav">
-              <div class="mock-dot" style="background:#ff5f57"></div>
-              <div class="mock-dot" style="background:#febc2e"></div>
-              <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar"
-                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
-                carvalhodlucas.github.io/bicirastro</div>
-            </div>
-            <div class="site-iframe-container">
-              <iframe src="https://carvalhodlucas.github.io/bicirastro/" class="site-iframe" scrolling="no"></iframe>
-              <div class="iframe-overlay"></div>
-            </div>
-          </div>
-        </div>
-        <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-3-label">Mobilidade Urbana • Site Institucional • Aluguel
-          </div>
-          <div class="portfolio-name" data-i18n="portfolio-3-name">BiciRastro</div>
-          <p class="portfolio-desc" data-i18n="portfolio-3-desc">Plataforma premium para aluguel de bicicletas e
-            mobilidade urbana. Foco em experiência do usuário fluida e design moderno para conversão de reservas.</p>
-          <a href="https://carvalhodlucas.github.io/bicirastro/" class="portfolio-link" target="_blank"
-            data-i18n="portfolio-3-link">Ver projeto →</a>
-        </div>
-      </div>
-
-      <div class="portfolio-card reveal">
-        <div class="portfolio-preview">
-          <div class="portfolio-preview-inner real-window">
-            <div class="mock-nav">
-              <div class="mock-dot" style="background:#ff5f57"></div>
-              <div class="mock-dot" style="background:#febc2e"></div>
-              <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar"
-                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
-                carvalhodlucas.github.io/advrastro</div>
-            </div>
-            <div class="site-iframe-container">
-              <iframe src="https://carvalhodlucas.github.io/advrastro/" class="site-iframe" scrolling="no"></iframe>
-              <div class="iframe-overlay"></div>
-            </div>
-          </div>
-        </div>
-        <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-4-label">Advocacia • Site Institucional • Direito
-            Trabalhista</div>
-          <div class="portfolio-name" data-i18n="portfolio-4-name">Rastro Advocacia</div>
-          <p class="portfolio-desc" data-i18n="portfolio-4-desc">Site institucional para escritório de advocacia
-            especializado em Direito do Trabalho. Design sóbrio, profissional e focado em converter leads qualificados.
-          </p>
-          <a href="https://carvalhodlucas.github.io/advrastro/" class="portfolio-link" target="_blank"
-            data-i18n="portfolio-4-link">Ver projeto →</a>
-        </div>
-      </div>
-
-      <div class="portfolio-card reveal">
-        <div class="portfolio-preview">
-          <div class="portfolio-preview-inner real-window">
-            <div class="mock-nav">
-              <div class="mock-dot" style="background:#ff5f57"></div>
-              <div class="mock-dot" style="background:#febc2e"></div>
-              <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar"
-                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
-                carvalhodlucas.github.io/rastroclinica</div>
-            </div>
-            <div class="site-iframe-container">
-              <iframe src="https://carvalhodlucas.github.io/rastroclinica/" class="site-iframe" scrolling="no"></iframe>
-              <div class="iframe-overlay"></div>
-            </div>
-          </div>
-        </div>
-        <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-5-label">Saúde & Bem-estar • Site Institucional •
-            Agendamento</div>
-          <div class="portfolio-name" data-i18n="portfolio-5-name">Rastro Clínica</div>
-          <p class="portfolio-desc" data-i18n="portfolio-5-desc">Instituição médica completa que oferece atendimento de
-            excelência em diversas especialidades, com foco em tecnologia avançada e cuidado humanizado para toda a
-            família.</p>
-          <a href="https://carvalhodlucas.github.io/rastroclinica/" class="portfolio-link" target="_blank"
-            data-i18n="portfolio-5-link">Ver projeto →</a>
-        </div>
-      </div>
-
-      <div class="portfolio-card reveal">
-          <div class="portfolio-preview">
-            <div class="portfolio-preview-inner real-window">
-              <div class="mock-nav">
-                <div class="mock-dot" style="background:#ff5f57"></div>
-                <div class="mock-dot" style="background:#febc2e"></div>
-                <div class="mock-dot" style="background:#28c840"></div>
-                <div class="mock-bar"
-                  style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
-                  carvalhodlucas.github.io/rastroimoveis</div>
-              </div>
-              <div class="site-iframe-container">
-                <iframe src="https://carvalhodlucas.github.io/rastroimoveis/" class="site-iframe"
-                  scrolling="no"></iframe>
-                <div class="iframe-overlay"></div>
-              </div>
-            </div>
-          </div>
-          <div class="portfolio-info">
-            <div class="portfolio-label" data-i18n="portfolio-6-label">Imobiliária • Site Institucional • Luxo</div>
-            <div class="portfolio-name" data-i18n="portfolio-6-name">Rastro Imóveis</div>
-            <p class="portfolio-desc" data-i18n="portfolio-6-desc">Imobiliária premium com curadoria exclusiva de
-              imóveis para compra e aluguel. Possui assistente virtual inteligente integrado para suporte em tempo real
-              e agendamento de visitas.</p>
-            <a href="https://carvalhodlucas.github.io/rastroimoveis/" class="portfolio-link" target="_blank"
-              data-i18n="portfolio-6-link">Ver projeto →</a>
-          </div>
-      <div class="portfolio-card reveal">
-        <div class="portfolio-preview">
-          <div class="portfolio-preview-inner real-window">
-            <div class="mock-nav">
-              <div class="mock-dot" style="background:#ff5f57"></div>
-              <div class="mock-dot" style="background:#febc2e"></div>
-              <div class="mock-dot" style="background:#28c840"></div>
-              <div class="mock-bar"
-                style="font-size: 8px; color: var(--muted); display: flex; align-items: center; padding-left: 10px;">
-                carvalhodlucas.github.io/petshop</div>
-            </div>
-            <div class="site-iframe-container">
-              <iframe src="https://carvalhodlucas.github.io/petshop/" class="site-iframe" scrolling="no"></iframe>
-              <div class="iframe-overlay"></div>
-            </div>
-          </div>
-        </div>
-        <div class="portfolio-info">
-          <div class="portfolio-label" data-i18n="portfolio-7-label">Pet Shop • Site Institucional • Serviços</div>
-          <div class="portfolio-name" data-i18n="portfolio-7-name">Rastro Pet Shop</div>
-          <p class="portfolio-desc" data-i18n="portfolio-7-desc">Plataforma moderna para pet shops com foco em agendamento de serviços, venda de produtos e cuidado animal. Design amigável e focado na experiência do tutor.</p>
-          <a href="https://carvalhodlucas.github.io/petshop/" class="portfolio-link" target="_blank"
-            data-i18n="portfolio-7-link">Ver projeto →</a>
-        </div>
-      </div>
-
+  <section id="portfolio" style="position:relative;width:100vw;height:100vh;overflow:hidden;background:#020408;">
+    <spline-viewer
+      url="https://prod.spline.design/eoJKm6Grphh4rJsy/scene.splinecode"
+      style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"
+    ></spline-viewer>
+    <canvas id="pf-canvas" style="position:absolute;inset:0;width:100%;height:100%;z-index:1;"></canvas>
+    <div id="pf-lbl-renderer" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;"></div>
+    <div class="pf-header" style="position:absolute;top:0;left:0;width:100%;padding-top:40px;text-align:center;z-index:20;pointer-events:none;">
+      <p style="font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:0.2em;color:#a855f7;margin-bottom:8px;">// PORTFÓLIO</p>
+      <h2 style="font-family:'Orbitron',monospace;font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:#fff;">
+        Projetos que <span style="background:linear-gradient(90deg,#00c8ff,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">falam</span> por si
+      </h2>
     </div>
+    <div id="pf-cards-wrap" style="position:absolute;inset:0;z-index:10;"></div>
+    <div id="pf-progress" style="position:absolute;left:30px;top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:16px;"></div>
   </section>
 
   <!-- PROCESS -->
@@ -2980,6 +2797,191 @@ Mantenha o tom de voz inovador e premium.`
         processObserver.observe(processSection);
       }
     });
+  </script>
+
+  <script>
+(function(){
+  const projects = [
+    { name:'CRM WhatsApp', cat:'AUTOMAÇÃO • IA', url:'carvalhodlucas.github.io/CRM-WhatsApp', src:'https://carvalhodlucas.github.io/CRM-WhatsApp/', link:'https://carvalhodlucas.github.io/CRM-WhatsApp/' },
+    { name:'Rastro', cat:'FINTECH • DASHBOARD', url:'www.rastroia.com', src:'https://www.rastroia.com/', link:'https://www.rastroia.com/' },
+    { name:'Rastro Imóveis', cat:'IMÓVEIS • CHATBOT', url:'carvalhodlucas.github.io/rastroimoveis', src:'https://carvalhodlucas.github.io/rastroimoveis/', link:'https://carvalhodlucas.github.io/rastroimoveis/' },
+    { name:'Horizonte', cat:'LANDING PAGE • DESIGN', url:'carvalhodlucas.github.io/Horizonte', src:'https://carvalhodlucas.github.io/Horizonte/', link:'https://carvalhodlucas.github.io/Horizonte/' },
+    { name:'BiciRastro', cat:'E-COMMERCE • REACT', url:'carvalhodlucas.github.io/bicirastro', src:'https://carvalhodlucas.github.io/bicirastro/', link:'https://carvalhodlucas.github.io/bicirastro/' },
+    { name:'PataLux', cat:'PET SHOP • PREMIUM', url:'carvalhodlucas.github.io/petshop', src:'https://carvalhodlucas.github.io/petshop/', link:'https://carvalhodlucas.github.io/petshop/' }
+  ];
+
+  function makeCardHTML(proj) {
+    return `
+      <div style="background:#0d1117;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:#ff5f57"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#febc2e"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#28c840"></div>
+        <div style="flex:1;background:#161b22;border-radius:4px;padding:2px 8px;font-size:9px;color:rgba(255,255,255,0.4);text-align:center;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${proj.url}</div>
+      </div>
+      <div style="width:100%;height:160px;overflow:hidden;background:#0a0f1e;position:relative;">
+        <iframe src="${proj.src}" loading="lazy" scrolling="no" style="width:200%;height:200%;transform:scale(0.5);transform-origin:top left;pointer-events:none;border:none;"></iframe>
+      </div>
+      <div style="padding:12px 14px;">
+        <div style="font-family:'Orbitron',monospace;font-size:0.6rem;color:#00c8ff;letter-spacing:0.1em;margin-bottom:4px;">${proj.cat}</div>
+        <div style="font-size:0.9rem;color:#fff;font-weight:700;margin-bottom:8px;">${proj.name}</div>
+        <a href="${proj.link}" target="_blank" style="font-size:0.8rem;color:#00c8ff;text-decoration:none;">Ver projeto →</a>
+      </div>`;
+  }
+
+  function initPortfolioMobile() {
+    const wrap = document.getElementById('pf-cards-wrap');
+    const canvas = document.getElementById('pf-canvas');
+    if (canvas) canvas.style.display = 'none';
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    wrap.style.cssText = 'position:absolute;bottom:40px;left:0;width:100%;display:flex;flex-direction:row;overflow-x:scroll;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;gap:16px;padding:0 20px;scrollbar-width:none;z-index:10;box-sizing:border-box;';
+    projects.forEach(proj => {
+      const card = document.createElement('div');
+      card.style.cssText = 'min-width:270px;width:270px;flex-shrink:0;scroll-snap-align:center;background:rgba(5,10,25,0.9);border:1px solid rgba(0,200,255,0.2);border-radius:16px;overflow:hidden;backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(0,0,0,0.8);';
+      card.innerHTML = makeCardHTML(proj);
+      wrap.appendChild(card);
+    });
+    const portfolio = document.getElementById('portfolio');
+    const dots = document.createElement('div');
+    dots.style.cssText = 'position:absolute;bottom:16px;left:0;width:100%;display:flex;justify-content:center;gap:6px;z-index:20;pointer-events:none;';
+    projects.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.style.cssText = i===0 ? 'width:20px;height:6px;border-radius:3px;background:#00c8ff;transition:all 0.3s;' : 'width:6px;height:6px;border-radius:50%;background:rgba(0,200,255,0.3);transition:all 0.3s;';
+      dots.appendChild(d);
+    });
+    portfolio.appendChild(dots);
+    wrap.addEventListener('scroll', () => {
+      const idx = Math.round(wrap.scrollLeft / 286);
+      dots.querySelectorAll('div').forEach((d,i) => {
+        d.style.cssText = i===idx ? 'width:20px;height:6px;border-radius:3px;background:#00c8ff;transition:all 0.3s;' : 'width:6px;height:6px;border-radius:50%;background:rgba(0,200,255,0.3);transition:all 0.3s;';
+      });
+    });
+  }
+
+  function initPortfolio3D() {
+    if (window.innerWidth <= 768) { initPortfolioMobile(); return; }
+    if (typeof THREE === 'undefined' || typeof THREE.CSS2DRenderer === 'undefined') { setTimeout(initPortfolio3D, 100); return; }
+
+    const container = document.getElementById('portfolio');
+    const canvas = document.getElementById('pf-canvas');
+    const lblContainer = document.getElementById('pf-cards-wrap');
+    if (!container || !canvas || !lblContainer) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(0, 0, 8);
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setClearColor(0x000000, 0);
+
+    const cssRenderer = new THREE.CSS2DRenderer();
+    cssRenderer.setSize(container.clientWidth, container.clientHeight);
+    cssRenderer.domElement.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;z-index:10;';
+    container.appendChild(cssRenderer.domElement);
+
+    // Stars
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = new Float32Array(3000 * 3);
+    for (let i = 0; i < starPos.length; i++) starPos[i] = (Math.random() - 0.5) * 200;
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.1, transparent: true, opacity: 0.6 })));
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.1));
+    const l1 = new THREE.PointLight(0x00c8ff, 2, 50); l1.position.set(0, 3, 0); scene.add(l1);
+    const l2 = new THREE.PointLight(0xa855f7, 1.5, 50); l2.position.set(0, -3, 0); scene.add(l2);
+
+    // Orbital cards group
+    const group = new THREE.Group();
+    scene.add(group);
+    const radius = 4;
+
+    projects.forEach((proj, i) => {
+      const angle = (i / projects.length) * Math.PI * 2;
+      const x = Math.cos(angle) * radius;
+      const z = Math.sin(angle) * radius;
+      const y = (i % 2 === 0) ? 0.8 : -0.8;
+
+      // Node sphere
+      const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.12, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0x00c8ff, emissive: 0x00c8ff, emissiveIntensity: 0.5 })
+      );
+      sphere.position.set(x, y, z);
+      group.add(sphere);
+
+      // Card label
+      const div = document.createElement('div');
+      div.style.cssText = 'width:240px;background:rgba(5,10,25,0.88);border:1px solid rgba(0,200,255,0.25);border-radius:14px;overflow:hidden;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 0 30px rgba(0,200,255,0.08),0 20px 60px rgba(0,0,0,0.8);pointer-events:auto;cursor:pointer;';
+      div.innerHTML = makeCardHTML(proj);
+      const label = new THREE.CSS2DObject(div);
+      label.position.set(x, y + 0.3, z);
+      group.add(label);
+    });
+
+    // Connection lines
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x00c8ff, transparent: true, opacity: 0.15 });
+    for (let i = 0; i < projects.length; i++) {
+      const a1 = (i / projects.length) * Math.PI * 2;
+      const a2 = ((i + 1) % projects.length / projects.length) * Math.PI * 2;
+      const pts = [
+        new THREE.Vector3(Math.cos(a1) * radius, (i % 2 === 0) ? 0.8 : -0.8, Math.sin(a1) * radius),
+        new THREE.Vector3(Math.cos(a2) * radius, ((i + 1) % 2 === 0) ? 0.8 : -0.8, Math.sin(a2) * radius)
+      ];
+      scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), lineMat));
+    }
+
+    let mouseX = 0, mouseY = 0;
+    document.addEventListener('mousemove', e => {
+      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    let scrollSpeed = 0;
+    window.addEventListener('scroll', () => { scrollSpeed = 0.02; setTimeout(() => scrollSpeed = 0, 200); });
+
+    // Progress dots
+    const prog = document.getElementById('pf-progress');
+    if (prog) {
+      projects.forEach((p, i) => {
+        const dot = document.createElement('div');
+        dot.style.cssText = 'display:flex;align-items:center;gap:8px;opacity:0.5;transition:opacity 0.3s;';
+        dot.innerHTML = `<div style="width:6px;height:6px;border-radius:50%;background:#00c8ff;"></div><span style="font-family:Orbitron,monospace;font-size:0.55rem;color:#00c8ff;letter-spacing:0.1em;">0${i + 1} ${p.name}</span>`;
+        prog.appendChild(dot);
+      });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      group.rotation.y += 0.003 + scrollSpeed;
+      camera.position.x += (mouseX * 1.5 - camera.position.x) * 0.03;
+      camera.position.y += (mouseY * 1 - camera.position.y) * 0.03;
+      camera.lookAt(0, 0, 0);
+
+      // Update active dot
+      if (prog) {
+        const activeIdx = Math.round(((group.rotation.y % (Math.PI * 2)) / (Math.PI * 2)) * projects.length + projects.length) % projects.length;
+        prog.querySelectorAll('div').forEach((d, i) => d.style.opacity = i === activeIdx ? '1' : '0.4');
+      }
+      renderer.render(scene, camera);
+      cssRenderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      cssRenderer.setSize(container.clientWidth, container.clientHeight);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { if (window.innerWidth <= 768) initPortfolioMobile(); else initPortfolio3D(); });
+  } else {
+    if (window.innerWidth <= 768) initPortfolioMobile(); else initPortfolio3D();
+  }
+})();
   </script>
 </body>
 
